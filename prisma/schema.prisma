@@ -1,0 +1,69 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlserver"
+  url      = env("DATABASE_URL")
+}
+
+model Projects {
+  Id        String    @id @default(uuid())
+  Name      String    @unique @db.VarChar(250)
+  CreatedAt DateTime  @default(now())
+  UpdatedAt DateTime?
+  DeletedAt DateTime?
+  Tasks     Tasks[]
+}
+
+model Tasks {
+  Id           String         @id @default(uuid())
+  Name         String         @db.VarChar(250)
+  Description  String         @db.VarChar(MAX)
+  ProjectId    String
+  Project      Projects       @relation(fields: [ProjectId], references: [Id])
+  CreatedAt    DateTime       @default(now())
+  UpdatedAt    DateTime?
+  DeletedAt    DateTime?
+  TimeTrackers TimeTrackers[]
+}
+
+model TimeTrackers {
+  Id            String       @id @default(uuid())
+  StartDate     DateTime     @default(now())
+  EndDate       DateTime?
+  TimeZoneId    String       @db.VarChar(200)
+  TaskId        String
+  Task          Tasks        @relation(fields: [TaskId], references: [Id])
+  ColaboratorId String
+  Colaborator   Colaborators @relation(fields: [ColaboratorId], references: [Id])
+  CreatedAt     DateTime     @default(now())
+  UpdatedAt     DateTime?
+  DeletedAt     DateTime
+}
+
+model Colaborators {
+  Id           String         @id @default(uuid())
+  User         Users          @relation(fields: [Id], references: [Id], onDelete: Cascade)
+  Name         String         @db.VarChar(250)
+  CreatedAt    DateTime       @default(now())
+  UpdatedAt    DateTime?
+  DeletedAt    DateTime?
+  TimeTrackers TimeTrackers[]
+  // Users        Users[]
+}
+
+model Users {
+  Id           String        @id @default(uuid())
+  Username     String        @unique @db.VarChar(250)
+  Password     String        @db.VarChar(512)
+  CreatedAt    DateTime      @default(now())
+  UpdatedAt    DateTime?
+  DeletedAt    DateTime?
+  Colaborators Colaborators?
+
+  @@map("users")
+}
