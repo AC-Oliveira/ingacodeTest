@@ -1,0 +1,83 @@
+@import 'bootstrap';
+@import 'bootstrap/scss/functions';
+@import 'bootstrap/scss/variables';
+@import 'bootstrap/scss/maps';
+@import 'bootstrap/scss/mixins';
+@import 'bootstrap/scss/utilities';
+
+$all-colors: map-merge-multiple(
+  $blues,
+  $indigos,
+  $purples,
+  $pinks,
+  $reds,
+  $oranges,
+  $yellows,
+  $greens,
+  $teals,
+  $cyans,
+  (
+    white: $white,
+    black: $black,
+    'gray-100': $gray-100,
+    'gray-200': $gray-200,
+    'gray-300': $gray-300,
+    'gray-400': $gray-400,
+    'gray-500': $gray-500,
+    'gray-600': $gray-600,
+    'gray-700': $gray-700,
+    'gray-800': $gray-800,
+    'gray-900': $gray-900,
+  )
+);
+
+$utilities: map-merge(
+  $utilities,
+  (
+    'color':
+      map-merge(
+        map-get($utilities, 'color'),
+        (
+          values: map-merge(map-get(map-get($utilities, 'color'), 'values'), ($all-colors)),
+        )
+      ),
+    'background-color':
+      map-merge(
+        map-get($utilities, 'background-color'),
+        (
+          values: map-merge(map-get(map-get($utilities, 'background-color'), 'values'), ($all-colors)),
+        )
+      ),
+    'border-color': (
+      property: border-color,
+      class: border,
+      values: map-merge(map-get(map-get($utilities, 'border-color'), 'values'), ($all-colors)),
+    ),
+  )
+);
+
+@import 'bootstrap/scss/utilities/api';
+
+body,
+html {
+  font-family: Inter, sans-serif;
+}
+body {
+  background: #fff;
+  font-family: Inter, Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+html,
+body,
+#root {
+  min-height: 100vh;
+}
+
+.content {
+  min-height: 100vh;
+}
