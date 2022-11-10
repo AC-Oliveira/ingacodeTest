@@ -58,6 +58,12 @@ $utilities: map-merge(
 
 @import 'bootstrap/scss/utilities/api';
 
+::root {
+  @each $color, $value in $all-colors {
+    --#{$color}: #{$value};
+  }
+}
+
 body,
 html {
   font-family: Inter, sans-serif;

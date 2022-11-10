@@ -1,11 +1,42 @@
-// import './App.css';
+import './styles/App.scss';
+import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
+import { useEffect, useRef } from 'react';
+import { Header } from './components/header';
+import { Home } from './pages/Home';
+import { Dashboard } from './pages/Dashboard';
+import { GlobalProvider } from './context/GlobalProvider';
+import services from './services';
+import Manage from './pages/Manage';
 
 function App(): JSX.Element {
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const { token } = localStorage;
+
+  useEffect(() => {
+    const auth = async (): Promise<void> => {
+      const authentified = await services.tokenVerify(token);
+
+      if (authentified && pathname === '/') {
+        navigate('/dashboard');
+      }
+      if (pathname !== '/' && authentified === false) {
+        navigate('/');
+      }
+    };
+
+    auth();
+  }, [token]);
+
   return (
-    <>
-      <h1>Xablau</h1>
-      <h1>Xablau</h1>
-    </>
+    <GlobalProvider>
+      <Header />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/manage" element={<Manage />} />
+      </Routes>
+    </GlobalProvider>
   );
 }
 

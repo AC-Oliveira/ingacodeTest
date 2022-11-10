@@ -20,6 +20,8 @@
   },
   "plugins": ["react", "react-hooks", "@typescript-eslint", "prettier"],
   "rules": {
+    "consistent-return": "off",
+    "react/jsx-no-constructed-context-values": "warn",
     "jsx-a11y/label-has-associated-control": [
       2,
       {
