@@ -1,16 +1,71 @@
+import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import userService from '../services/User';
 
-const loginUser = async (request, response) => {
+interface ICreateUser {
+  username: string;
+  password: string;
+}
+
+const loginUser = async (req: Request, res: Response) => {
   try {
-    const { email, password } = request.body;
-    const result = await userService.loginUser(email, password);
-    response.status(StatusCodes.OK).json(result);
+    const { username, password } = req.body;
+    const result = await userService.loginUser(username, password);
+    res.status(StatusCodes.OK).json(result);
   } catch (error: any) {
-    response.status(StatusCodes.BAD_REQUEST).json({ message: error.message });
+    res.status(StatusCodes.BAD_REQUEST).json({ message: error.message });
   }
+};
+
+const createUser = async (req: Request<{}, {}, ICreateUser>, res: Response) => {
+  try {
+    const { username, password } = req.body;
+    const result = await userService.createUser(username, password);
+    res.status(StatusCodes.CREATED).json(result);
+  } catch (error: any) {
+    res.status(StatusCodes.BAD_REQUEST).json({ message: error.message });
+  }
+};
+
+const createCollaborator = async (req: Request, res: Response) => {
+  try {
+    const { name, username } = req.body;
+    const result = await userService.createCollaborator(name, username);
+    res.status(StatusCodes.CREATED).json(result);
+  } catch (error: any) {
+    res.status(StatusCodes.BAD_REQUEST).json({ message: error.message });
+  }
+};
+
+const findAllUsers = async (req: Request, res: Response) => {
+  try {
+    const result = await userService.findAllUsers();
+    res.status(StatusCodes.OK).json(result);
+  } catch (error: any) {
+    res.status(StatusCodes.BAD_REQUEST).json({ message: error.message });
+  }
+};
+
+const findAllCollaborators = async (req: Request, res: Response) => {
+  try {
+    const result = await userService.findAllCollaborators();
+    res.status(StatusCodes.OK).json(result);
+  } catch (error: any) {
+    res.status(StatusCodes.BAD_REQUEST).json({ message: error.message });
+  }
+};
+
+const findCollaboratorsByName = async (req: Request, res: Response) => {
+  const { word } = req.body;
+  const result = await userService.findCollaboratorsByName(word);
+  res.status(StatusCodes.OK).json(result);
 };
 
 export default {
   loginUser,
+  createUser,
+  createCollaborator,
+  findAllUsers,
+  findAllCollaborators,
+  findCollaboratorsByName,
 };

@@ -32,20 +32,20 @@ model Tasks {
 }
 
 model TimeTrackers {
-  Id            String       @id @default(uuid())
-  StartDate     DateTime     @default(now())
+  Id            String        @id @default(uuid())
+  StartDate     DateTime      @default(now())
   EndDate       DateTime?
-  TimeZoneId    String       @db.VarChar(200)
+  TimeZoneId    String        @db.VarChar(200)
   TaskId        String
-  Task          Tasks        @relation(fields: [TaskId], references: [Id])
+  Task          Tasks         @relation(fields: [TaskId], references: [Id])
   ColaboratorId String
-  Colaborator   Colaborators @relation(fields: [ColaboratorId], references: [Id])
-  CreatedAt     DateTime     @default(now())
+  Colaborator   Collaborators @relation(fields: [ColaboratorId], references: [Id])
+  CreatedAt     DateTime      @default(now())
   UpdatedAt     DateTime?
   DeletedAt     DateTime
 }
 
-model Colaborators {
+model Collaborators {
   Id           String         @id @default(uuid())
   User         Users          @relation(fields: [Id], references: [Id], onDelete: Cascade)
   Name         String         @db.VarChar(250)
@@ -53,17 +53,14 @@ model Colaborators {
   UpdatedAt    DateTime?
   DeletedAt    DateTime?
   TimeTrackers TimeTrackers[]
-  // Users        Users[]
 }
 
 model Users {
-  Id           String        @id @default(uuid())
-  Username     String        @unique @db.VarChar(250)
-  Password     String        @db.VarChar(512)
-  CreatedAt    DateTime      @default(now())
+  Id           String         @id @default(uuid())
+  Username     String         @unique @db.VarChar(250)
+  Password     String         @db.VarChar(512)
+  CreatedAt    DateTime       @default(now())
   UpdatedAt    DateTime?
   DeletedAt    DateTime?
-  Colaborators Colaborators?
-
-  @@map("users")
+  Collaborator Collaborators?
 }

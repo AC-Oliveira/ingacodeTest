@@ -1,4 +1,13 @@
 import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcrypt';
+
+const saltRounds = 10;
+
+const passwordGenerator = async (password: string): Promise<string> => {
+  const salt = await bcrypt.genSalt(saltRounds);
+  const hash = await bcrypt.hash(password, salt);
+  return hash;
+};
 
 export async function main(): Promise<void> {
   const prisma = new PrismaClient();
@@ -8,22 +17,24 @@ export async function main(): Promise<void> {
     data: [
       {
         Username: 'outrageous',
-        Password: 'outrageous1234',
+        Password: await passwordGenerator('outrageous1234'),
       },
       {
         Username: 'hawk',
-        Password: 'hawk1234',
+        Password: await passwordGenerator('hawk1234'),
       },
       {
         Username: 'jimmy',
-        Password: 'jimmy1234',
+        Password: await passwordGenerator('jimmy1234'),
       },
       {
         Username: 'reader',
-        Password: 'reader1234',
+        Password: await passwordGenerator('reader1234'),
       },
     ],
   });
 
   prisma.$disconnect();
 }
+
+main();

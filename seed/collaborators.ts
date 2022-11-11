@@ -14,7 +14,7 @@ export async function main(): Promise<void> {
   });
 
   users.forEach(async (user) => {
-    const colaborators = await prisma.colaborators.create({
+    const colaborators = await prisma.collaborators.create({
       data: {
         Id: user.Id,
         Name: `Name ${user.Username}`,
