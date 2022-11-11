@@ -42,23 +42,16 @@ const findUserByUsername = async (username: string) => {
   return user;
 };
 
-const findUserById = async (id: string) => {
-  prisma.$connect();
-  const user: IUser | null = await prisma.users.findUnique({
-    where: {
-      Id: id,
-    },
-  });
-  prisma.$disconnect();
-
-  return user;
-};
-
 const findCollaboratorsByName = async (word: string) => {
   prisma.$connect();
   const collaborator = await prisma.collaborators.findMany({
     where: {
       Name: { contains: word },
+    },
+    take: 5,
+    select: {
+      Name: true,
+      Id: true,
     },
   });
   prisma.$disconnect();
@@ -68,7 +61,12 @@ const findCollaboratorsByName = async (word: string) => {
 
 const findAllUsers = async () => {
   prisma.$connect();
-  const users = await prisma.users.findMany();
+  const users = await prisma.users.findMany({
+    select: {
+      Username: true,
+      Id: true,
+    },
+  });
   prisma.$disconnect();
 
   return users;
@@ -76,10 +74,27 @@ const findAllUsers = async () => {
 
 const findAllCollaborators = async () => {
   prisma.$connect();
-  const collaborators = await prisma.collaborators.findMany();
+  const collaborators = await prisma.collaborators.findMany({
+    select: {
+      Name: true,
+      Id: true,
+    },
+  });
   prisma.$disconnect();
 
   return collaborators;
+};
+
+const findCollaboratorById = async (Id: string) => {
+  prisma.$connect();
+  const collaborator = await prisma.collaborators.findUnique({
+    where: {
+      Id,
+    },
+  });
+  prisma.$disconnect();
+
+  return collaborator;
 };
 
 const updateUser = async (username: string, password: string) => {
@@ -103,9 +118,9 @@ export default {
   createUser,
   createCollaborator,
   findUserByUsername,
-  findUserById,
   findCollaboratorsByName,
   findAllUsers,
   findAllCollaborators,
+  findCollaboratorById,
   updateUser,
 };

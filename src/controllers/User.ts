@@ -10,8 +10,8 @@ interface ICreateUser {
 const loginUser = async (req: Request, res: Response) => {
   try {
     const { username, password } = req.body;
-    const result = await userService.loginUser(username, password);
-    res.status(StatusCodes.OK).json(result);
+    const token = await userService.loginUser(username, password);
+    res.status(StatusCodes.OK).json(token);
   } catch (error: any) {
     res.status(StatusCodes.BAD_REQUEST).json({ message: error.message });
   }
@@ -20,8 +20,10 @@ const loginUser = async (req: Request, res: Response) => {
 const createUser = async (req: Request<{}, {}, ICreateUser>, res: Response) => {
   try {
     const { username, password } = req.body;
-    const result = await userService.createUser(username, password);
-    res.status(StatusCodes.CREATED).json(result);
+    await userService.createUser(username, password);
+    res
+      .status(StatusCodes.CREATED)
+      .json({ message: 'Usuário criado com sucesso!' });
   } catch (error: any) {
     res.status(StatusCodes.BAD_REQUEST).json({ message: error.message });
   }
@@ -30,8 +32,10 @@ const createUser = async (req: Request<{}, {}, ICreateUser>, res: Response) => {
 const createCollaborator = async (req: Request, res: Response) => {
   try {
     const { name, username } = req.body;
-    const result = await userService.createCollaborator(name, username);
-    res.status(StatusCodes.CREATED).json(result);
+    await userService.createCollaborator(name, username);
+    res
+      .status(StatusCodes.CREATED)
+      .json({ message: 'Colaborador criado com sucesso!' });
   } catch (error: any) {
     res.status(StatusCodes.BAD_REQUEST).json({ message: error.message });
   }

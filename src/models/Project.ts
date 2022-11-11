@@ -10,8 +10,6 @@ const createProject = async (projectName: string) => {
     },
   });
   prisma.$disconnect();
-
-  return newProject;
 };
 
 const findProjectByName = async (projectName: string) => {
@@ -26,13 +24,63 @@ const findProjectByName = async (projectName: string) => {
   return project;
 };
 
+const findProjectById = async (Id: string) => {
+  prisma.$connect();
+  const project: Projects | null = await prisma.projects.findUnique({
+    where: {
+      Id: Id,
+    },
+  });
+  prisma.$disconnect();
+
+  return project;
+};
+
 const findAllProjects = async () => {
   prisma.$connect();
   const projects = await prisma.projects.findMany({
     where: {
       DeletedAt: {
-        not: null,
+        equals: null,
       },
+    },
+    select: {
+      Id: true,
+      Name: true,
+      CreatedAt: true,
+      Tasks: {
+        where: {
+          DeletedAt: {
+            equals: null,
+          },
+        },
+        select: {
+          Id: true,
+          Name: true,
+          Description: true,
+          CreatedAt: true,
+          UpdatedAt: true,
+          TimeTrackers: {
+            where: {
+              DeletedAt: {
+                equals: null,
+              },
+            },
+            select: {
+              Id: true,
+              StartDate: true,
+              EndDate: true,
+              CreatedAt: true,
+              UpdatedAt: true,
+              TimeZoneId: true,
+              TaskId: true,
+              CollaboratorId: true,
+              Collaborator: true,
+            },
+          },
+        },
+      },
+      UpdatedAt: true,
     },
   });
   prisma.$disconnect();
@@ -74,6 +122,7 @@ const deleteProject = async (projectName: string) => {
 export default {
   createProject,
   findProjectByName,
+  findProjectById,
   findAllProjects,
   updateProjects,
   deleteProject,

@@ -32,10 +32,10 @@ CREATE TABLE [dbo].[TimeTrackers] (
     [EndDate] DATETIME2,
     [TimeZoneId] VARCHAR(200) NOT NULL,
     [TaskId] NVARCHAR(1000) NOT NULL,
-    [ColaboratorId] NVARCHAR(1000) NOT NULL,
+    [CollaboratorId] NVARCHAR(1000) NOT NULL,
     [CreatedAt] DATETIME2 NOT NULL CONSTRAINT [TimeTrackers_CreatedAt_df] DEFAULT CURRENT_TIMESTAMP,
     [UpdatedAt] DATETIME2,
-    [DeletedAt] DATETIME2 NOT NULL,
+    [DeletedAt] DATETIME2,
     CONSTRAINT [TimeTrackers_pkey] PRIMARY KEY CLUSTERED ([Id])
 );
 
@@ -68,7 +68,7 @@ ALTER TABLE [dbo].[Tasks] ADD CONSTRAINT [Tasks_ProjectId_fkey] FOREIGN KEY ([Pr
 ALTER TABLE [dbo].[TimeTrackers] ADD CONSTRAINT [TimeTrackers_TaskId_fkey] FOREIGN KEY ([TaskId]) REFERENCES [dbo].[Tasks]([Id]) ON DELETE NO ACTION ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE [dbo].[TimeTrackers] ADD CONSTRAINT [TimeTrackers_ColaboratorId_fkey] FOREIGN KEY ([ColaboratorId]) REFERENCES [dbo].[Collaborators]([Id]) ON DELETE NO ACTION ON UPDATE CASCADE;
+ALTER TABLE [dbo].[TimeTrackers] ADD CONSTRAINT [TimeTrackers_CollaboratorId_fkey] FOREIGN KEY ([CollaboratorId]) REFERENCES [dbo].[Collaborators]([Id]) ON DELETE NO ACTION ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE [dbo].[Collaborators] ADD CONSTRAINT [Collaborators_Id_fkey] FOREIGN KEY ([Id]) REFERENCES [dbo].[Users]([Id]) ON DELETE CASCADE ON UPDATE CASCADE;

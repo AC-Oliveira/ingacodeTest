@@ -1,13 +1,14 @@
+import error from '../messages/error';
 import projectModel from '../models/Project';
-
-const createProject = async (name: string) => {
-  const project = await projectModel.createProject(name);
-  return project;
-};
 
 const findProjectByName = async (name: string) => {
   const project = await projectModel.findProjectByName(name);
   return project;
+};
+const createProject = async (name: string) => {
+  const projectExists = await projectModel.findProjectByName(name);
+  if (projectExists) throw new Error(error.PROJECT_ALREADY_EXISTS);
+  const project = await projectModel.createProject(name);
 };
 
 const findAllProjects = async () => {
@@ -16,16 +17,15 @@ const findAllProjects = async () => {
 };
 
 const updateProjects = async (projectName: string, newProjectName: string) => {
-  const project = await projectModel.updateProjects(
-    projectName,
-    newProjectName
-  );
-  return project;
+  const projectExists = await projectModel.findProjectByName(projectName);
+  if (!projectExists) throw new Error(error.PROJECT_NOT_FOUND);
+  await projectModel.updateProjects(projectName, newProjectName);
 };
 
 const deleteProject = async (projectName: string) => {
+  const projectExists = await projectModel.findProjectByName(projectName);
+  if (!projectExists) throw new Error(error.PROJECT_NOT_FOUND);
   const project = await projectModel.deleteProject(projectName);
-  return project;
 };
 
 export default {

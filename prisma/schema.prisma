@@ -32,17 +32,17 @@ model Tasks {
 }
 
 model TimeTrackers {
-  Id            String        @id @default(uuid())
-  StartDate     DateTime      @default(now())
-  EndDate       DateTime?
-  TimeZoneId    String        @db.VarChar(200)
-  TaskId        String
-  Task          Tasks         @relation(fields: [TaskId], references: [Id])
-  ColaboratorId String
-  Colaborator   Collaborators @relation(fields: [ColaboratorId], references: [Id])
-  CreatedAt     DateTime      @default(now())
-  UpdatedAt     DateTime?
-  DeletedAt     DateTime
+  Id             String        @id @default(uuid())
+  StartDate      DateTime      @default(now())
+  EndDate        DateTime?
+  TimeZoneId     String        @db.VarChar(200)
+  TaskId         String
+  Task           Tasks         @relation(fields: [TaskId], references: [Id])
+  CollaboratorId String
+  Collaborator   Collaborators @relation(fields: [CollaboratorId], references: [Id])
+  CreatedAt      DateTime      @default(now())
+  UpdatedAt      DateTime?
+  DeletedAt      DateTime?
 }
 
 model Collaborators {

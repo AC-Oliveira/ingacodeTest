@@ -1,32 +1,35 @@
 import { Request, Response } from 'express';
-import Project from '../services/Project';
+import projectService from '../services/Project';
+import { StatusCodes } from 'http-status-codes';
 
 const createProject = async (req: Request, res: Response) => {
   try {
     const { name } = req.body;
-    const result = await Project.createProject(name);
-    res.status(201).json(result);
+    await projectService.createProject(name);
+    res
+      .status(StatusCodes.CREATED)
+      .json({ message: 'Projeto criado com sucesso!' });
   } catch (error: any) {
-    res.status(400).json({ message: error.message });
+    res.status(StatusCodes.BAD_REQUEST).json({ message: error.message });
   }
 };
 
 const findProjectByName = async (req: Request, res: Response) => {
   try {
     const { name } = req.params;
-    const result = await Project.findProjectByName(name);
-    res.status(200).json(result);
+    const project = await projectService.findProjectByName(name);
+    res.status(StatusCodes.OK).json(project);
   } catch (error: any) {
-    res.status(400).json({ message: error.message });
+    res.status(StatusCodes.BAD_REQUEST).json({ message: error.message });
   }
 };
 
 const findAllProjects = async (req: Request, res: Response) => {
   try {
-    const result = await Project.findAllProjects();
-    res.status(200).json(result);
+    const projects = await projectService.findAllProjects();
+    res.status(StatusCodes.OK).json(projects);
   } catch (error: any) {
-    res.status(400).json({ message: error.message });
+    res.status(StatusCodes.BAD_REQUEST).json({ message: error.message });
   }
 };
 
@@ -34,20 +37,22 @@ const updateProjects = async (req: Request, res: Response) => {
   try {
     const { name } = req.params;
     const { newName } = req.body;
-    const result = await Project.updateProjects(name, newName);
-    res.status(200).json(result);
+    await projectService.updateProjects(name, newName);
+    res
+      .status(StatusCodes.OK)
+      .json({ message: 'Projeto renomeado com sucesso!' });
   } catch (error: any) {
-    res.status(400).json({ message: error.message });
+    res.status(StatusCodes.BAD_REQUEST).json({ message: error.message });
   }
 };
 
 const deleteProject = async (req: Request, res: Response) => {
   try {
     const { name } = req.params;
-    const result = await Project.deleteProject(name);
-    res.status(200).json(result);
+    await projectService.deleteProject(name);
+    res.status(StatusCodes.OK).json({ message: `Projeto ${name} deletado.` });
   } catch (error: any) {
-    res.status(400).json({ message: error.message });
+    res.status(StatusCodes.BAD_REQUEST).json({ message: error.message });
   }
 };
 
