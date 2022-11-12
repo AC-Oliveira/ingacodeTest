@@ -12,13 +12,13 @@ export function Dashboard(): JSX.Element {
 
   return (
     <div className="content d-flex flex-column align-items-center">
-      <div>
+      <div className="mx-2 w-75">
         <h1 className="text-blue-600 text-center fw-bold mt-3">Dashboard</h1>
         <p className="fw-bold text-center">
           Task Status: <span className={`${counting ? 'text-success' : 'text-danger'} `}>{counting ? 'Iniciada' : 'Pausada'}</span>
         </p>
       </div>
-      <div className="border border-gray-200 rounded bg-white p-2 p-lg-4 mt-2 mx-2" style={{ maxWidth: '1400px' }}>
+      <div className="container border border-gray-200 rounded bg-white p-2 p-lg-4 mt-2 overflow-hidden W-75" style={{ maxWidth: '1400px' }}>
         <DashboardProjectComponent project="Task Tracker" />
         <DashboardTaskComponent task="Dashboard Design" />
         <div className="row p-3 align-items-center justify-content-start">
@@ -71,10 +71,10 @@ export function Dashboard(): JSX.Element {
           </div>
         </div>
         <div className="row p-3 align-items-center justify-content-start">
-          <div className="col-12 col-sm-6 col-md-6">
+          <div className="col-12 col-md-6">
             <p className="text-danger mb-0 fs-5 fw-semibold text-center text-sm-end justify">Tempo de Projeto:</p>
           </div>
-          <div className="col-12 col-sm-6 col-md-6">
+          <div className="col-12 col-md-6">
             <ProjectTimer offsetTimestamp={passedTime} />
           </div>
         </div>

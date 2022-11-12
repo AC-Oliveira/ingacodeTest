@@ -35,7 +35,7 @@ export function Home(): JSX.Element {
               await services.login(username, password, navigate);
             }}
             type="submit"
-            className="btn btn-primary my-3 w-75"
+            className="btn btn-primary my-3 btn-border-radius-pill w-75 shadow-none"
           >
             Login
           </button>

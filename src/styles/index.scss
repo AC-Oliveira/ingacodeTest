@@ -5,6 +5,48 @@
 @import 'bootstrap/scss/mixins';
 @import 'bootstrap/scss/utilities';
 
+.btn-border-radius-pill {
+  border-radius: 50rem;
+}
+.form-control {
+  &#collaborators-input {
+    &.active-search {
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+  }
+}
+
+@media (max-width: 992px) {
+  .container {
+    width: 90%;
+  }
+}
+
+.list-group {
+  &.active-search {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+  }
+}
+
+.list-group-item,
+.list-group-item:hover {
+  z-index: auto;
+  &.add-collaborator {
+    cursor: pointer;
+    &.active {
+      background-color: $blue-100;
+      color: $gray-900;
+      border: none;
+    }
+  }
+}
+.list-group-item {
+  --bs-list-group-item-padding-x: 0;
+  --bs-list-group-item-padding-y: 0;
+}
+
 $all-colors: map-merge-multiple(
   $blues,
   $indigos,

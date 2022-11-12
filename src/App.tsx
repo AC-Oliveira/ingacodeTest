@@ -1,6 +1,6 @@
 import './styles/App.scss';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { Header } from './components/header';
 import { Home } from './pages/Home';
 import { Dashboard } from './pages/Dashboard';
@@ -16,6 +16,7 @@ function App(): JSX.Element {
   useEffect(() => {
     const auth = async (): Promise<void> => {
       const authentified = await services.tokenVerify(token);
+      console.log(authentified);
 
       if (authentified && pathname === '/') {
         navigate('/dashboard');
@@ -26,7 +27,7 @@ function App(): JSX.Element {
     };
 
     auth();
-  }, [token]);
+  }, []);
 
   return (
     <GlobalProvider>
