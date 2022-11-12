@@ -76,18 +76,21 @@ export async function main(): Promise<void> {
           Description:
             'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut mattis neque quis fermentum gravida. Nullam imperdiet felis turpis, ut maximus eros euismod ac. Nullam a mauris dignissim, ornare tortor at, aliquam erat. Phasellus et accumsan libero. Proin at orci eros. Etiam lobortis at ipsum et semper. Nulla pellentesque felis eu est sodales auctor. Nunc et lorem interdum, scelerisque nulla in, venenatis felis. Nam non molestie diam, eu posuere magna. Proin sem dolor, mattis ac interdum sed, consequat vitae eros. Sed ut enim quis libero euismod tincidunt. Etiam imperdiet libero nec diam tempus laoreet. Mauris ultrices erat leo, in aliquam leo congue vitae. Integer in lacinia ipsum.',
           ProjectId: project.Id,
+          CreatedAt: new Date('2022-01-01'),
         },
         {
           Name: `Cavaleiro Jedi ${project.Name}`,
           Description:
             'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut mattis neque quis fermentum gravida. Nullam imperdiet felis turpis, ut maximus eros euismod ac. Nullam a mauris dignissim, ornare tortor at, aliquam erat. Phasellus et accumsan libero. Proin at orci eros. Etiam lobortis at ipsum et semper. Nulla pellentesque felis eu est sodales auctor. Nunc et lorem interdum, scelerisque nulla in, venen',
           ProjectId: project.Id,
+          CreatedAt: new Date('2022-01-01'),
         },
         {
           Name: `Mestre Jedi ${project.Name}`,
           Description:
             'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut mattis neque quis fermentum gravida. Nullam imperdiet felis turpis, ut maximus eros euismod ac. Nullam a mauris dignissim, ornare tortor at, aliquam erat. Phasellus et accumsan libero. Proin at orci eros. Etiam lobortis at ipsum et semper. Nulla pellentesque felis eu est sodales auctor. Nunc et lorem interdum, scelerisque nulla in, venen',
           ProjectId: project.Id,
+          CreatedAt: new Date('2022-01-01'),
         },
       ],
     });

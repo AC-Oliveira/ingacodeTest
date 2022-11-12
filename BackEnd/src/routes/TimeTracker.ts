@@ -20,4 +20,9 @@ router.post(
   timeTrackerController.findRunningTimeTracker
 );
 
+router.delete(
+  '/delete',
+  timeTrackerController.deleteTimeTrackerByTaskAndCollaborator
+);
+
 export default router;

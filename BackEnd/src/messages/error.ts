@@ -8,4 +8,6 @@ export default {
   TIME_TRACKER_ALREADY_RUNNING: 'Já existe um time tracker em execução!',
   TIME_TRACKER_NOT_RUNNING: 'Nenhum time tracker em execução!',
   COLLABORATOR_NOT_FOUND: 'Colaborador não encontrado!',
+  COLLABORATOR_NOT_FOUND_FN: (CollaboratorName: string) =>
+    `${CollaboratorName} não encontrado!`,
 };

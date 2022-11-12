@@ -43,6 +43,11 @@ const findCollaboratorsByName = async (word: string) => {
   return collaborator;
 };
 
+const findCollaboratorById = async (id: string, name: string) => {
+  const user = userModel.findCollaboratorById(id);
+  if (!user) throw new Error(errors.COLLABORATOR_NOT_FOUND_FN(name));
+};
+
 export default {
   loginUser,
   createUser,
@@ -50,4 +55,5 @@ export default {
   findAllUsers,
   findAllCollaborators,
   findCollaboratorsByName,
+  findCollaboratorById,
 };

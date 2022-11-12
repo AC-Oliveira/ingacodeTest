@@ -11,6 +11,11 @@ const createProject = async (name: string) => {
   const project = await projectModel.createProject(name);
 };
 
+const findProjectById = async (id: string) => {
+  const project = await projectModel.findProjectById(id);
+  if (!project) throw new Error(error.PROJECT_NOT_FOUND);
+};
+
 const findAllProjects = async () => {
   const projects = await projectModel.findAllProjects();
   return projects;
@@ -32,6 +37,7 @@ export default {
   createProject,
   findProjectByName,
   findAllProjects,
+  findProjectById,
   updateProjects,
   deleteProject,
 };

@@ -12,7 +12,7 @@ app.use(cors());
 app.use('/jwt', jwtRoutes);
 app.use('/user', userRoutes);
 app.use('/project', projectRoutes);
-app.use('/task', taskRoutes);
+app.use('/tasks', taskRoutes);
 app.use('/timetracker', timeTrackerRoutes);
 
 export default app;

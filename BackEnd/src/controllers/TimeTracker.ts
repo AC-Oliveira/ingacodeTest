@@ -38,4 +38,32 @@ const findRunningTimeTracker = async (req: Request, res: Response) => {
   }
 };
 
-export default { createTimeTracker, finishTimeTracker, findRunningTimeTracker };
+const deleteTimeTrackerByTaskAndCollaborator = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    console.log(req.query.users);
+
+    const userString: any = req.query['users'];
+    const users = JSON.parse(userString);
+    // const users: any = {};
+    const { TaskId }: any = req.query;
+    await timeTrackerService.deleteTimeTrackerByTaskAndCollaborator(
+      users,
+      TaskId
+    );
+    res
+      .status(StatusCodes.OK)
+      .json({ message: 'Collaborador(es) removido(s) da Task com sucesso!' });
+  } catch (error: any) {
+    res.status(StatusCodes.BAD_REQUEST).json({ message: error.message });
+  }
+};
+
+export default {
+  createTimeTracker,
+  finishTimeTracker,
+  findRunningTimeTracker,
+  deleteTimeTrackerByTaskAndCollaborator,
+};

@@ -1,7 +1,7 @@
 import error from '../messages/error';
 import timeTrackerModel from '../models/TimeTracker';
 import { ITimeTrackers } from '../models/TimeTracker';
-import userModel from '../models/User';
+import userService from '../services/User';
 
 const createTimeTracker = async ({
   CollaboratorId,
@@ -31,15 +31,23 @@ const findRunningTimeTracker = async (ColaboratorId: string) => {
 };
 
 const deleteTimeTrackerByTaskAndCollaborator = async (
-  ColaboratorId: string,
+  users: { CollaboratorId: string; Name: string }[],
   TaskId: string
 ) => {
-  const user = userModel.findCollaboratorById(ColaboratorId);
-  if (!user) throw new Error(error.COLLABORATOR_NOT_FOUND);
-  await timeTrackerModel.deleteTimeTrackerByTaskAndCollaborator(
-    ColaboratorId,
-    TaskId
+  await Promise.all(
+    users.map(async (user) => {
+      await userService.findCollaboratorById(user.CollaboratorId, user.Name);
+      await timeTrackerModel.deleteTimeTrackerByTaskAndCollaborator(
+        user.CollaboratorId,
+        TaskId
+      );
+    })
   );
 };
 
-export default { createTimeTracker, finishTimeTracker, findRunningTimeTracker };
+export default {
+  createTimeTracker,
+  finishTimeTracker,
+  findRunningTimeTracker,
+  deleteTimeTrackerByTaskAndCollaborator,
+};

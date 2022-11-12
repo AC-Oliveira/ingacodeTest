@@ -10,7 +10,7 @@ router.get(
   auth.validateTokenMiddleware,
   userController.findAllCollaborators
 );
-router.post('/login', auth.validateTokenMiddleware, userController.loginUser);
+router.post('/login', userController.loginUser);
 router.post(
   '/createUser',
   auth.validateTokenMiddleware,
