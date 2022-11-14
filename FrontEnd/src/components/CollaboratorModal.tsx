@@ -2,7 +2,8 @@ import { useContext, useRef, useState } from 'react';
 import { Modal } from 'bootstrap';
 import { BsFillPersonPlusFill } from 'react-icons/bs';
 import { DebounceInput } from 'react-debounce-input';
-import services from '../services';
+import userServices from '../services/user';
+import timetrackerServices from '../services/timetracker';
 import GlobalContext from '../context/GlobalContext';
 
 interface ICollaborators {
@@ -27,6 +28,7 @@ export function CollaboratorModal({
   });
   const modalRef: any = useRef();
   const { setShow, setMessage } = useContext<any>(GlobalContext);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [collaboratorName, setCollaboratorName] = useState('');
   const [addCollaboratorsList, setAddCollaboratorsList] = useState<ICollaborators[]>([]);
   const [collaboratorsList, setCollaboratorsList] = useState<ICollaborators[]>([]);
@@ -49,7 +51,7 @@ export function CollaboratorModal({
 
   const onChange = async (event: React.ChangeEvent<HTMLInputElement>): Promise<void> => {
     setCollaboratorName(event.target.value);
-    const collaborators: ICollaborators[] | { message: string } = await services.searchCollaborators(event.target.value);
+    const collaborators: ICollaborators[] | { message: string } = await userServices.searchCollaborators(event.target.value);
     if (Array.isArray(collaborators)) {
       const filteredCollaborators = collaborators.filter((collaborator) => !selectedCollaborators?.includes(collaborator.Name));
       setCollaboratorsList(filteredCollaborators);
@@ -115,13 +117,14 @@ export function CollaboratorModal({
                 onClick={async () => {
                   const messages: { name: string; message: string }[] = [];
                   const EndDate = new Date(Date.parse(String(new Date())) + 3);
+
                   await Promise.all(
                     addCollaboratorsList.map(async (collaborator) => {
-                      const message = await services.addCollaborator(ProjectId, collaborator.Id, TaskId, EndDate);
+                      const message = await timetrackerServices.addCollaborator(ProjectId, collaborator.Id, TaskId, EndDate);
                       messages.push({ name: collaborator.Name, message });
                     })
                   );
-                  // addCollaboratorsList.forEach(async (collaboratorId) => {});
+
                   const messagesComponent = (
                     <div className="">
                       {messages.map((user) => (
@@ -132,8 +135,6 @@ export function CollaboratorModal({
                       ))}
                     </div>
                   );
-                  const newMessage = messages.join(' ');
-                  console.log(newMessage);
 
                   setMessage(messagesComponent);
                   setAddCollaboratorsList([]);

@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import services from '../services';
 import { Input } from './Input';
+import taskServices from '../services/task';
 
 interface IProjectRegister {
   setMessage: React.Dispatch<React.SetStateAction<string>>;
@@ -27,7 +27,7 @@ export function TaskRegister({ setMessage, setShow, setNewTask, ProjectId }: IPr
       <div style={{ maxWidth: '479.4px' }} className="mt-2 d-flex gap-2 w-100 justify-content-center">
         <button
           onClick={async () => {
-            const newMessage = await services.createTask(tasktName, ProjectId, taskDescription);
+            const newMessage = await taskServices.createTask(tasktName, ProjectId, taskDescription);
             setMessage(newMessage);
             setShow(true);
           }}

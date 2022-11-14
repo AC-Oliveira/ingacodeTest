@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import services from '../services';
+import projectService from '../services/project';
 import { Input } from './Input';
 
 interface IProjectRegister {
@@ -17,7 +17,7 @@ export function ProjectRegister({ setMessage, setShow, setNewProject }: IProject
       <div style={{ maxWidth: '479.4px' }} className="d-flex gap-2 w-100 justify-content-center">
         <button
           onClick={async () => {
-            const newMessage = await services.createProject(projectName);
+            const newMessage = await projectService.createProject(projectName);
             setMessage(newMessage);
             setShow(true);
           }}

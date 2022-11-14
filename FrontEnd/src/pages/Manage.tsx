@@ -6,7 +6,8 @@ import { ProjectRegister } from '../components/ProjectRegister';
 import { TaskListItem } from '../components/TaskListItem';
 import { TaskRegister } from '../components/TaskRegister';
 import GlobalContext from '../context/GlobalContext';
-import services, { IProject } from '../services';
+import { services, IProject } from '../services';
+import projectServices from '../services/project';
 
 export default function Manage(): JSX.Element {
   const { setShow, setMessage } = useContext<any>(GlobalContext);
@@ -17,7 +18,7 @@ export default function Manage(): JSX.Element {
 
   useEffect(() => {
     const getProjects = async (): Promise<void> => {
-      const projects = await services.getProjects();
+      const projects = await projectServices.getProjects();
       setProjectList(projects);
     };
     getProjects();

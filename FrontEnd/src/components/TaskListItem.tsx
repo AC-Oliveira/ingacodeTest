@@ -2,7 +2,9 @@ import { useContext, useState } from 'react';
 import { FaEdit, FaTrash } from 'react-icons/fa';
 import { AiOutlineMinusCircle, AiOutlinePlusCircle } from 'react-icons/ai';
 import { CollaboratorModal } from './CollaboratorModal';
-import services, { ICollaborator } from '../services';
+import { ICollaborator } from '../services';
+import taskServices from '../services/task';
+import timetrackerServices from '../services/timetracker';
 import GlobalContext from '../context/GlobalContext';
 
 interface ITaskListItemProps {
@@ -17,7 +19,7 @@ interface ITaskListItemProps {
 export function TaskListItem({
   description: defaultDescription,
   collaborators,
-  taskName,
+  taskName: defaultTaskName,
   taskStart,
   projectId,
   taskId,
@@ -26,13 +28,21 @@ export function TaskListItem({
   const [isEditing, setIsEditing] = useState(false);
   const [description, setDescription] = useState(defaultDescription);
   const [collaboratorsRemoved, setCollaboratorsRemoved] = useState<ICollaborator[]>([]);
+  const [taskName, setTaskName] = useState(defaultTaskName);
+
   const removedCollaborators: ICollaborator[] | undefined = collaboratorsRemoved?.filter((cr) => collaborators?.find((c) => c.Id === cr.Id));
-  // console.log(collaborators);
 
   return (
     <div className="list-group-item list-group-item-action bg-gray-100" aria-current="true">
       <div className="d-flex flex-column  flex-md-row w-100 justify-content-between bg-danger p-2">
-        <h5 className="mb-1 text-white">{taskName}</h5>
+        {!isEditing && <h5 className="mb-1 text-white">{taskName}</h5>}
+        {isEditing && (
+          <input
+            value={taskName}
+            onChange={({ target }) => setTaskName(target.value)}
+            className="mb-1 text-gray-900 rounded-pill ps-3 border border-blue-600 border-3"
+          />
+        )}
         <small className="text-white">{`${taskStart} dias atras`}</small>
       </div>
       <div className="p-2">
@@ -59,7 +69,16 @@ export function TaskListItem({
               id="floatingTextarea2"
             />
             <div className="row justify-content-center gap-sm-3">
-              <button className="col col-6 btn btn-primary my-2" type="button" style={{ width: '200px' }}>
+              <button
+                onClick={async () => {
+                  const message = await taskServices.updateTask(taskId, description, taskName);
+                  setMessage(message);
+                  setShow(true);
+                }}
+                className="col col-6 btn btn-primary my-2"
+                type="button"
+                style={{ width: '200px' }}
+              >
                 Salvar
               </button>
               <button
@@ -119,8 +138,7 @@ export function TaskListItem({
                 <span className="my-3">{removedCollaborators.map((e) => e.Name).join(', ')}</span>
                 <button
                   onClick={async () => {
-                    console.log(removedCollaborators, taskId);
-                    const message = await services.deleteTimeTrackerByTaskAndCollaborator(
+                    const message = await timetrackerServices.deleteTimeTrackerByTaskAndCollaborator(
                       removedCollaborators.map((e) => ({ Name: e.Name, CollaboratorId: e.Id })),
                       taskId
                     );

@@ -25,4 +25,17 @@ const findAllProjectTasks = async (req: Request, res: Response) => {
   }
 };
 
-export default { createTask, findAllProjectTasks };
+const updateTask = async (req: Request, res: Response) => {
+  const { Id } = req.params;
+  const { Description, Name } = req.body as unknown as Tasks;
+  try {
+    await taskService.updateTaskDescription(Id, Description, Name);
+    return res
+      .status(StatusCodes.OK)
+      .json({ message: 'Descrição da Task atualizada com sucesso!' });
+  } catch (error: any) {
+    return res.status(StatusCodes.BAD_REQUEST).json({ message: error.message });
+  }
+};
+
+export default { createTask, findAllProjectTasks, updateTask };

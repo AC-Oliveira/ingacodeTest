@@ -37,13 +37,14 @@ const findAllProjectTasks = async (ProjectId: string) => {
   return tasks;
 };
 
-const updateTaskDescription = async (Id: string, Description: string) => {
+const updateTask = async (Id: string, Description: string, Name: string) => {
   try {
     prisma.$connect();
     const task = await prisma.tasks.update({
       where: { Id },
       data: {
-        Description: Description,
+        Description,
+        Name,
       },
     });
     prisma.$disconnect();
@@ -53,4 +54,4 @@ const updateTaskDescription = async (Id: string, Description: string) => {
   }
 };
 
-export default { createTask, findAllProjectTasks, updateTaskDescription };
+export default { createTask, findAllProjectTasks, updateTask };

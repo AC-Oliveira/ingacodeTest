@@ -20,12 +20,16 @@ const findAllProjectTasks = async (ProjectId: string) => {
   return tasks;
 };
 
-const updateTaskDescription = async (Id: string, Description: string) => {
+const updateTaskDescription = async (
+  Id: string,
+  Description: string,
+  Name: string
+) => {
   try {
-    await taskModel.updateTaskDescription(Id, Description);
+    await taskModel.updateTask(Id, Description, Name);
   } catch (error) {
     throw error;
   }
 };
 
-export default { createTask, findAllProjectTasks };
+export default { createTask, findAllProjectTasks, updateTaskDescription };

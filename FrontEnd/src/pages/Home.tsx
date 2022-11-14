@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { RiLockFill, RiUser3Line } from 'react-icons/ri';
 import { useNavigate } from 'react-router-dom';
 import { Input } from '../components/Input';
-import services from '../services';
+import userServices from '../services/user';
 
 export function Home(): JSX.Element {
   const [username, setUsername] = useState('');
@@ -32,7 +32,7 @@ export function Home(): JSX.Element {
           <button
             onClick={async (e) => {
               e.preventDefault();
-              await services.login(username, password, navigate);
+              await userServices.login(username, password, navigate);
             }}
             type="submit"
             className="btn btn-primary my-3 btn-border-radius-pill w-75 shadow-none"

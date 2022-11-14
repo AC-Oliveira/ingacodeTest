@@ -11,4 +11,10 @@ router.get(
   taskController.findAllProjectTasks
 );
 
+router.put(
+  '/update/:Id',
+  auth.validateTokenMiddleware,
+  taskController.updateTask
+);
+
 export default router;

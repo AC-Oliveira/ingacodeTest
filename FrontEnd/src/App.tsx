@@ -5,7 +5,7 @@ import { Header } from './components/header';
 import { Home } from './pages/Home';
 import { Dashboard } from './pages/Dashboard';
 import { GlobalProvider } from './context/GlobalProvider';
-import services from './services';
+import { services } from './services';
 import Manage from './pages/Manage';
 
 function App(): JSX.Element {
