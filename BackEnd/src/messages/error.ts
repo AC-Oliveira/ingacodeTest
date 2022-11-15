@@ -10,4 +10,6 @@ export default {
   COLLABORATOR_NOT_FOUND: 'Colaborador não encontrado!',
   COLLABORATOR_NOT_FOUND_FN: (CollaboratorName: string) =>
     `${CollaboratorName} não encontrado!`,
+  TASK_NAME_DESCRIPTION_EMPTY: 'Nome e descrição da task não podem ser vazios!',
+  TASK_NOT_FOUND: 'Task não encontrada!',
 };
