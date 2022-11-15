@@ -22,7 +22,7 @@ router.post(
   userController.createCollaborator
 );
 router.post(
-  '/collaboratorName',
+  '/collaboratorName/',
   auth.validateTokenMiddleware,
   userController.findCollaboratorsByName
 );

@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
+import success from '../messages/success';
 import userService from '../services/User';
 
 interface ICreateUser {
@@ -23,7 +24,7 @@ const createUser = async (req: Request<{}, {}, ICreateUser>, res: Response) => {
     await userService.createUser(username, password);
     res
       .status(StatusCodes.CREATED)
-      .json({ message: 'Usuário criado com sucesso!' });
+      .json({ message: success.USER_CREATED_SUCCESS });
   } catch (error: any) {
     res.status(StatusCodes.BAD_REQUEST).json({ message: error.message });
   }
@@ -35,7 +36,7 @@ const createCollaborator = async (req: Request, res: Response) => {
     await userService.createCollaborator(name, username);
     res
       .status(StatusCodes.CREATED)
-      .json({ message: 'Colaborador criado com sucesso!' });
+      .json({ message: success.COLLABORATOR_CREATED_SUCCESS });
   } catch (error: any) {
     res.status(StatusCodes.BAD_REQUEST).json({ message: error.message });
   }

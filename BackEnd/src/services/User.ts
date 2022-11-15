@@ -19,13 +19,13 @@ const createUser = async (username: string, password: string) => {
   const user = await userModel.findUserByUsername(username);
   if (user) throw new Error(errors.USER_ALREADY_EXISTS);
   const hashPassword = await hash.passwordGenerator(password);
-  const newUser = await userModel.createUser(username, hashPassword);
+  await userModel.createUser(username, hashPassword);
 };
 
 const createCollaborator = async (name: string, username: string) => {
   const user = await userModel.findUserByUsername(username);
   if (!user) throw new Error(errors.USER_NOT_FOUND);
-  const collaborator = await userModel.createCollaborator(user.Id, name);
+  await userModel.createCollaborator(user.Id, name);
 };
 
 const findAllUsers = async () => {

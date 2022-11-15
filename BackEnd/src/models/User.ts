@@ -13,8 +13,6 @@ const createUser = async (username: string, password: string) => {
     },
   });
   prisma.$disconnect();
-
-  return user;
 };
 
 const createCollaborator = async (id: string, name: string) => {
@@ -26,8 +24,6 @@ const createCollaborator = async (id: string, name: string) => {
     },
   });
   prisma.$disconnect();
-
-  return collaborator;
 };
 
 const findUserByUsername = async (username: string) => {
@@ -97,23 +93,6 @@ const findCollaboratorById = async (Id: string) => {
   return collaborator;
 };
 
-const updateUser = async (username: string, password: string) => {
-  prisma.$connect();
-  const user = await prisma.users.update({
-    where: {
-      Username: username,
-    },
-    data: {
-      Password: password,
-      Username: username,
-      UpdatedAt: new Date(),
-    },
-  });
-  prisma.$disconnect();
-
-  return user;
-};
-
 export default {
   createUser,
   createCollaborator,
@@ -122,5 +101,4 @@ export default {
   findAllUsers,
   findAllCollaborators,
   findCollaboratorById,
-  updateUser,
 };
