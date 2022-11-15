@@ -32,4 +32,17 @@ const updateTaskDescription = async (
   }
 };
 
-export default { createTask, findAllProjectTasks, updateTaskDescription };
+const deleteTask = async (Id: string) => {
+  try {
+    await taskModel.deleteTask(Id);
+  } catch (error) {
+    throw error;
+  }
+};
+
+export default {
+  createTask,
+  findAllProjectTasks,
+  updateTaskDescription,
+  deleteTask,
+};
