@@ -1,46 +1,46 @@
 import server from '.';
 
-const createTask = async (Name: string, ProjectId: string, Description: string): Promise<string> => {
+const createTask = async (Name: string, ProjectId: string | undefined, Description: string): Promise<{ message: string; error?: boolean | undefined }> => {
   const { token } = localStorage;
   try {
     const { data }: any = await server.post(
-      '/task/create',
-      { Name, ProjectId, Description },
+      `/task/create/${ProjectId}`,
+      { Name, Description },
       {
         headers: { Authorization: `Bearer ${token}` },
       }
     );
-    return data.message;
+    return { message: data.message };
   } catch (error: any) {
-    return error.response.data.message;
+    return { message: error.response.data.message as string, error: true };
   }
 };
 
-const updateTask = async (TaskId: string, Description: string, Name: string): Promise<string> => {
+const updateTask = async (TaskId: string, Description: string, Name: string): Promise<{ message: string; error?: boolean }> => {
   const { token } = localStorage;
   try {
     const { data } = await server.put(
-      `/tasks/update/${TaskId}`,
+      `/task/update/${TaskId}`,
       { Description, Name },
       {
         headers: { Authorization: `Bearer ${token}` },
       }
     );
-    return data.message;
+    return { message: data.message };
   } catch (error: any) {
-    return error.response.data.message;
+    return { message: error.response.data.message as string, error: true };
   }
 };
 
-const deleteTask = async (TaskId: string): Promise<string> => {
+const deleteTask = async (TaskId: string): Promise<{ message: string; error?: boolean }> => {
   const { token } = localStorage;
   try {
-    const { data } = await server.delete(`/tasks/delete/${TaskId}`, {
+    const { data } = await server.delete(`/task/delete/${TaskId}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
-    return data.message;
+    return { message: data.message };
   } catch (error: any) {
-    return error.response.data.message;
+    return { message: error.response.data.message as string, error: true };
   }
 };
 

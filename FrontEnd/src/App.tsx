@@ -7,6 +7,7 @@ import { Dashboard } from './pages/Dashboard';
 import { GlobalProvider } from './context/GlobalProvider';
 import { services } from './services';
 import Manage from './pages/Manage';
+import { ManageProvider } from './context/ManageProvider';
 
 function App(): JSX.Element {
   const navigate = useNavigate();
@@ -16,12 +17,11 @@ function App(): JSX.Element {
   useEffect(() => {
     const auth = async (): Promise<void> => {
       const authentified = await services.tokenVerify(token);
-      console.log(authentified);
 
       if (authentified && pathname === '/') {
         navigate('/dashboard');
       }
-      if (pathname !== '/' && authentified === false) {
+      if (pathname !== '/' && !authentified) {
         navigate('/');
       }
     };
@@ -29,13 +29,19 @@ function App(): JSX.Element {
     auth();
   }, []);
 
+  const ManageWithProvider = (
+    <ManageProvider>
+      <Manage />
+    </ManageProvider>
+  );
+
   return (
     <GlobalProvider>
       <Header />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/manage" element={<Manage />} />
+        <Route path="/manage" element={ManageWithProvider} />
       </Routes>
     </GlobalProvider>
   );

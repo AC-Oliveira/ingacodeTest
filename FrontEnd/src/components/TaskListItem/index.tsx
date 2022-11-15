@@ -1,32 +1,33 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { CollaboratorModal } from '../CollaboratorModal';
-import { ICollaborator } from '../../services';
 import { CollaboratorsList } from './CollaboratorsList';
 import { TaskDescription } from './TaskDescription';
 import { TaskDescriptionButtons } from './TaskDescriptionButtons';
+import ManageContext from '../../context/ManageContext';
+import { IManageContext } from '../../pages/Manage';
+import { ITask } from '../../services';
 
-interface ITaskListItemProps {
-  description: string;
-  collaborators?: ICollaborator[];
-  taskName: string;
-  taskStart: number;
-  projectId: string;
-  taskId: string;
-}
+export function TaskListItem({ key, task }: { key: string; task: ITask }): JSX.Element {
+  const { project }: IManageContext = useContext<any>(ManageContext);
 
-export function TaskListItem({
-  description: defaultDescription,
-  collaborators,
-  taskName: defaultTaskName,
-  taskStart,
-  projectId,
-  taskId,
-}: ITaskListItemProps): JSX.Element {
   const [isEditing, setIsEditing] = useState(false);
-  const [taskName, setTaskName] = useState(defaultTaskName);
+  const [taskName, setTaskName] = useState(task.Name);
+
+  const findCollaborators = task.TimeTrackers?.map((timeTracker) => timeTracker?.Collaborator);
+
+  const collaborators = findCollaborators?.filter((collaborator, idx) => findCollaborators?.findIndex((c) => c.Name === collaborator.Name) === idx);
+
+  const calcDays = (date: Date): number => {
+    const today = String(new Date());
+    const dateString = String(new Date(date));
+
+    const msDiff: number = Date.parse(today) - Date.parse(dateString);
+    const diff = Math.floor(msDiff / (1000 * 3600 * 24));
+    return diff;
+  };
 
   return (
-    <div className="list-group-item list-group-item-action bg-gray-100" aria-current="true">
+    <div key={key} className="list-group-item list-group-item-action bg-gray-100" aria-current="true">
       <div className="d-flex flex-column  flex-md-row w-100 justify-content-between bg-danger p-2">
         {!isEditing && <h5 className="mb-1 text-white">{taskName}</h5>}
         {isEditing && (
@@ -36,19 +37,13 @@ export function TaskListItem({
             className="mb-1 text-gray-900 rounded-pill ps-3 border border-blue-600 border-3"
           />
         )}
-        <small className="text-white">{`${taskStart} dias atras`}</small>
+        <small className="text-white">{`${calcDays(task.CreatedAt)} dias atras`}</small>
       </div>
 
       <div className="p-2">
-        <TaskDescriptionButtons setIsEditing={setIsEditing} />
+        <TaskDescriptionButtons Id={task.Id} setIsEditing={setIsEditing} />
 
-        <TaskDescription
-          defaultDescription={defaultDescription}
-          isEditing={isEditing}
-          setIsEditing={setIsEditing}
-          taskId={taskId}
-          taskName={taskName}
-        />
+        <TaskDescription isEditing={isEditing} setIsEditing={setIsEditing} taskName={taskName} task={task} />
       </div>
       <div className="p-2">
         <div className="d-flex align-items-center mb-2">
@@ -57,9 +52,9 @@ export function TaskListItem({
           ) : (
             <small className="flex-grow-1">Nenhum colaborador foi adcionado a task</small>
           )}
-          <CollaboratorModal TaskId={taskId} ProjectId={projectId} collaborators={collaborators?.map((e) => e.Name)} />
+          <CollaboratorModal TaskId={task.Id} ProjectId={project.Id} collaborators={collaborators?.map((e) => e.Name)} />
         </div>
-        {!!collaborators?.length && <CollaboratorsList collaborators={collaborators} taskId={taskId} />}
+        {!!collaborators?.length && <CollaboratorsList collaborators={collaborators} taskId={task.Id} />}
       </div>
     </div>
   );

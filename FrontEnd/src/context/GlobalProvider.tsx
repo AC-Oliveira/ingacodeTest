@@ -1,10 +1,11 @@
-import { ReactNode, useEffect, useMemo, useState } from 'react';
+import { ReactNode, useMemo, useState } from 'react';
 import GlobalContext from './GlobalContext';
 
 export function GlobalProvider({ children }: { children: ReactNode }): JSX.Element {
   const [counting, setCounting] = useState(false);
   const [message, setMessage] = useState('');
   const [show, setShow] = useState(false);
+  const [error, setError] = useState(false);
 
   const contextProviderValue = useMemo(
     () => ({
@@ -14,8 +15,10 @@ export function GlobalProvider({ children }: { children: ReactNode }): JSX.Eleme
       setMessage,
       show,
       setShow,
+      error,
+      setError,
     }),
-    [counting, message, show]
+    [counting, message, show, error]
   );
 
   return <GlobalContext.Provider value={contextProviderValue}>{children}</GlobalContext.Provider>;

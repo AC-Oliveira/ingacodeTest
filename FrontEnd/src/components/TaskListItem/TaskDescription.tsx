@@ -4,17 +4,20 @@ import taskServices from '../../services/task';
 import GlobalContext from '../../context/GlobalContext';
 
 interface ITaskDescriptionProps {
-  defaultDescription: string;
-  taskId: string;
-  taskName: string;
   isEditing: boolean;
   setIsEditing: Dispatch<React.SetStateAction<boolean>>;
+  taskName: string;
+  task: {
+    Id: string;
+    Description: string;
+  };
 }
 
-export function TaskDescription({ defaultDescription, taskId, taskName, isEditing, setIsEditing }: ITaskDescriptionProps): JSX.Element {
-  const { setMessage, setShow } = useContext<any>(GlobalContext);
+export function TaskDescription({ isEditing, setIsEditing, taskName, task }: ITaskDescriptionProps): JSX.Element {
+  const { setMessage, setShow, setError } = useContext<any>(GlobalContext);
+  const { Id, Description } = task;
 
-  const [description, setDescription] = useState(defaultDescription);
+  const [description, setDescription] = useState(Description);
   if (!isEditing) return <p className="mb-1">{description}</p>;
   return (
     <div className="form-floating d-flex flex-column">
@@ -29,8 +32,9 @@ export function TaskDescription({ defaultDescription, taskId, taskName, isEditin
       <div className="row justify-content-center gap-sm-3">
         <button
           onClick={async () => {
-            const message = await taskServices.updateTask(taskId, description, taskName);
-            setMessage(message);
+            const data = await taskServices.updateTask(Id, description, taskName);
+            setMessage(data.message);
+            if (data.error) setError(true);
             setShow(true);
           }}
           className="col col-6 btn btn-primary my-2"
@@ -42,7 +46,7 @@ export function TaskDescription({ defaultDescription, taskId, taskName, isEditin
         <button
           onClick={() => {
             setIsEditing(false);
-            setDescription(defaultDescription);
+            setDescription(Description);
           }}
           className="col col-6 btn btn-secondary my-2"
           type="button"

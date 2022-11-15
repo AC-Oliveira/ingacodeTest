@@ -1,6 +1,6 @@
 import server, { IProject } from '.';
 
-const createProject = async (name: string): Promise<string> => {
+const createProject = async (name: string): Promise<{ message: string; error?: boolean | undefined }> => {
   const { token } = localStorage;
   try {
     const { data }: any = await server.post(
@@ -10,9 +10,9 @@ const createProject = async (name: string): Promise<string> => {
         headers: { Authorization: `Bearer ${token}` },
       }
     );
-    return data.message;
+    return { message: data.message };
   } catch (error: any) {
-    return error.response.data.message;
+    return { message: error.response.data.message as string, error: true };
   }
 };
 
