@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import projectService from '../services/Project';
 import { StatusCodes } from 'http-status-codes';
+import success from '../messages/success';
 
 const createProject = async (req: Request, res: Response) => {
   try {
@@ -8,7 +9,7 @@ const createProject = async (req: Request, res: Response) => {
     await projectService.createProject(name);
     res
       .status(StatusCodes.CREATED)
-      .json({ message: 'Projeto criado com sucesso!' });
+      .json({ message: success.PROJECT_CREATED_SUCCESS });
   } catch (error: any) {
     res.status(StatusCodes.BAD_REQUEST).json({ message: error.message });
   }
@@ -40,7 +41,7 @@ const updateProjects = async (req: Request, res: Response) => {
     await projectService.updateProjects(name, newName);
     res
       .status(StatusCodes.OK)
-      .json({ message: 'Projeto renomeado com sucesso!' });
+      .json({ message: success.PROJECT_RENAMED_SUCCESS });
   } catch (error: any) {
     res.status(StatusCodes.BAD_REQUEST).json({ message: error.message });
   }

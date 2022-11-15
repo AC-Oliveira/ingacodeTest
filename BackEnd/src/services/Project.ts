@@ -30,7 +30,7 @@ const updateProjects = async (projectName: string, newProjectName: string) => {
 const deleteProject = async (projectName: string) => {
   const projectExists = await projectModel.findProjectByName(projectName);
   if (!projectExists) throw new Error(error.PROJECT_NOT_FOUND);
-  const project = await projectModel.deleteProject(projectName);
+  await projectModel.deleteProject(projectName);
 };
 
 export default {

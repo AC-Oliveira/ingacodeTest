@@ -100,8 +100,6 @@ const updateProjects = async (projectName: string, newProjectName: string) => {
     },
   });
   prisma.$disconnect();
-
-  return project;
 };
 
 const deleteProject = async (projectName: string) => {
@@ -115,8 +113,6 @@ const deleteProject = async (projectName: string) => {
     },
   });
   prisma.$disconnect();
-
-  return project;
 };
 
 export default {

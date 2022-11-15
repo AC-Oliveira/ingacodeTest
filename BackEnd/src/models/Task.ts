@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import errors from '../messages/error';
 
 const prisma = new PrismaClient();
 
@@ -49,9 +50,26 @@ const updateTask = async (Id: string, Description: string, Name: string) => {
     });
     prisma.$disconnect();
     return task;
-  } catch (error) {
+  } catch (error: any) {
+    if (error.code === 'P2025') throw new Error(errors.TASK_NOT_FOUND);
     throw error;
   }
 };
 
-export default { createTask, findAllProjectTasks, updateTask };
+const deleteTask = async (Id: string) => {
+  try {
+    prisma.$connect();
+    await prisma.tasks.update({
+      where: { Id },
+      data: {
+        DeletedAt: new Date(),
+      },
+    });
+    prisma.$disconnect();
+  } catch (error: any) {
+    if (error.code === 'P2025') throw new Error(errors.TASK_NOT_FOUND);
+    throw error;
+  }
+};
+
+export default { createTask, findAllProjectTasks, updateTask, deleteTask };
