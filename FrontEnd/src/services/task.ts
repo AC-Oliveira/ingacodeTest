@@ -21,7 +21,7 @@ const updateTask = async (TaskId: string, Description: string, Name: string): Pr
   try {
     const { data } = await server.put(
       `/tasks/update/${TaskId}`,
-      { Description },
+      { Description, Name },
       {
         headers: { Authorization: `Bearer ${token}` },
       }
@@ -32,7 +32,20 @@ const updateTask = async (TaskId: string, Description: string, Name: string): Pr
   }
 };
 
+const deleteTask = async (TaskId: string): Promise<string> => {
+  const { token } = localStorage;
+  try {
+    const { data } = await server.delete(`/tasks/delete/${TaskId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return data.message;
+  } catch (error: any) {
+    return error.response.data.message;
+  }
+};
+
 export default {
   createTask,
   updateTask,
+  deleteTask,
 };

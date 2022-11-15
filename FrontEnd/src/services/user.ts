@@ -17,7 +17,7 @@ const searchCollaborators = async (word: string): Promise<ICollaborator[] | { me
   const { token } = localStorage;
   try {
     const { data }: { data: ICollaborator[] } = await server.post(
-      '/user/collaboratorName',
+      '/user/collaboratorName/',
       { word },
       {
         headers: { Authorization: `Bearer ${token}` },
