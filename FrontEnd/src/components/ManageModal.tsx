@@ -4,7 +4,7 @@ import GlobalContext from '../context/GlobalContext';
 import ManageContext from '../context/ManageContext';
 
 export function ManageModal(): JSX.Element {
-  const { show, message, error, setError } = useContext<any>(GlobalContext);
+  const { show, message, setShow } = useContext<any>(GlobalContext);
   const { newTask, setNewTask, newProject, setNewProject } = useContext<any>(ManageContext);
   const modalRef: any = useRef();
 
@@ -46,9 +46,8 @@ export function ManageModal(): JSX.Element {
               onClick={() => {
                 if (newTask) setNewTask(false);
                 if (newProject) setNewProject(false);
+                setShow(false);
                 hideModal();
-                setError(false);
-                if (!error) window.location.reload();
               }}
             >
               Fechar

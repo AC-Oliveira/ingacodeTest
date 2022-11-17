@@ -3,11 +3,11 @@ import { BsPlusLg } from 'react-icons/bs';
 import { Link } from 'react-router-dom';
 import { TaskListItem } from './TaskListItem';
 import ManageContext from '../context/ManageContext';
-import { IProject } from '../services';
 import { IManageContext } from '../pages/Manage';
+import { ManageProjectsList } from './TaskListItem/ManageProjectsList';
 
-export function ManageMenu({ projectList }: { projectList: IProject[] }): JSX.Element {
-  const { setNewProject, setNewTask, setProject, project, setTaskList }: IManageContext = useContext<any>(ManageContext);
+export function ManageMenu(): JSX.Element {
+  const { setNewProject, setNewTask, project }: IManageContext = useContext<any>(ManageContext);
   return (
     <div className="row my-2 mx-auto" style={{ maxWidth: '1400px' }}>
       <div className="border border-gray-200 rounded col col-12 col-md-4 bg-white mb-3 mb-md-0">
@@ -18,25 +18,7 @@ export function ManageMenu({ projectList }: { projectList: IProject[] }): JSX.El
           </button>
         </div>
         <hr className="mt-1" />
-        <div>
-          <div className="d-flex flex-column justify-content-between align-items-center gap-3">
-            {projectList?.map((prj) => (
-              <button
-                type="button"
-                onClick={() => {
-                  setProject(prj);
-                  setTaskList(prj.Tasks);
-                }}
-                className="btn btn-link text-decoration-none"
-              >
-                <h4 key={prj?.Id} className={`${project?.Id === prj.Id ? 'text-danger' : 'text-blue-600'} fw-semibold`}>
-                  {prj?.Name}
-                </h4>
-              </button>
-            ))}
-          </div>
-        </div>
-
+        <ManageProjectsList />
         <div>
           <hr />
           <Link to="/dashboard" className="text-decoration-none">

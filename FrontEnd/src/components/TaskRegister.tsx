@@ -7,7 +7,7 @@ import { IManageContext } from '../pages/Manage';
 
 export function TaskRegister(): JSX.Element {
   const { setMessage, setShow, setError } = useContext<any>(GlobalContext);
-  const { setNewTask, project }: IManageContext = useContext<any>(ManageContext);
+  const { setNewTask, project, setProject, projectList, setProjectList }: IManageContext = useContext<any>(ManageContext);
   const [tasktName, setTasktName] = useState('');
   const [taskDescription, setTaskDescription] = useState('');
   return (
@@ -25,10 +25,19 @@ export function TaskRegister(): JSX.Element {
       <div style={{ maxWidth: '479.4px' }} className="mt-2 d-flex gap-2 w-100 justify-content-center">
         <button
           onClick={async () => {
-            const data = await taskServices.createTask(tasktName, project.Id, taskDescription);
+            const data: any = await taskServices.createTask(tasktName, project.Id, taskDescription);
             setMessage(data.message);
             if (data.error) setError(data.error);
             setShow(true);
+
+            if (data.Task) {
+              const newProject = { ...project, Tasks: [...project.Tasks, data.Task] };
+              setProject(newProject);
+              const projectIndex = projectList.findIndex((proj) => proj.Id === project.Id);
+              const newProjectList = [...projectList];
+              newProjectList[projectIndex] = newProject;
+              setProjectList(newProjectList);
+            }
           }}
           type="button"
           className="btn btn-primary btn-border-radius-pill"
