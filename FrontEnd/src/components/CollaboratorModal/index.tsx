@@ -1,12 +1,17 @@
-import { useRef, useState } from 'react';
+import { Dispatch, SetStateAction, useRef } from 'react';
 import { Modal } from 'bootstrap';
 import { BsFillPersonPlusFill } from 'react-icons/bs';
 import { ModalFooter } from './ModalFooter';
 import { ModalBody } from './ModalBody';
+import { ICollaborator } from '../../services';
 
-interface ICollaborators {
-  Id: string;
-  Name: string;
+export interface ICollaboratorModalContext {
+  collaboratorName: string;
+  setCollaboratorName: Dispatch<SetStateAction<string>>;
+  addCollaboratorsList: ICollaborator[];
+  setAddCollaboratorsList: Dispatch<SetStateAction<ICollaborator[]>>;
+  collaboratorsList: ICollaborator[];
+  setCollaboratorsList: Dispatch<SetStateAction<ICollaborator[]>>;
 }
 
 export function CollaboratorModal({
@@ -18,16 +23,13 @@ export function CollaboratorModal({
   TaskId: string;
   collaborators: string[] | undefined;
 }): JSX.Element {
-  const myModal = document.getElementById('myModal');
-  const myInput = document.getElementById('collaborators-input');
+  const selectModal = document.getElementById('myModal');
+  const Input = document.getElementById('collaborators-input');
 
-  myModal?.addEventListener('shown.bs.modal', () => {
-    myInput?.focus();
+  selectModal?.addEventListener('shown.bs.modal', () => {
+    Input?.focus();
   });
   const modalRef: any = useRef();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [collaboratorName, setCollaboratorName] = useState('');
-  const [addCollaboratorsList, setAddCollaboratorsList] = useState<ICollaborators[]>([]);
 
   const showModal = (): void => {
     const modal: any = modalRef.current;
@@ -39,7 +41,6 @@ export function CollaboratorModal({
   };
 
   const hideModal = (): void => {
-    setCollaboratorName('');
     const modal: any = modalRef.current;
     const bsModal = Modal.getInstance(modal);
     bsModal?.hide();
@@ -59,20 +60,8 @@ export function CollaboratorModal({
               </h5>
               <button type="button" className="btn-close" onClick={hideModal} aria-label="Close" />
             </div>
-            <ModalBody
-              selectedCollaborators={selectedCollaborators}
-              setCollaboratorName={setCollaboratorName}
-              addCollaboratorsList={addCollaboratorsList}
-              setAddCollaboratorsList={setAddCollaboratorsList}
-            />
-            <ModalFooter
-              ProjectId={ProjectId}
-              TaskId={TaskId}
-              addCollaboratorsList={addCollaboratorsList}
-              hideModal={hideModal}
-              setAddCollaboratorsList={setAddCollaboratorsList}
-              setCollaboratorName={setCollaboratorName}
-            />
+            <ModalBody selectedCollaborators={selectedCollaborators} />
+            <ModalFooter ProjectId={ProjectId} TaskId={TaskId} hideModal={hideModal} />
           </div>
         </div>
       </div>

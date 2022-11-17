@@ -1,7 +1,8 @@
-import { Dispatch, SetStateAction, useState } from 'react';
+import { useContext } from 'react';
 import { DebounceInput } from 'react-debounce-input';
 import userServices from '../../services/user';
 import { ICollaborator } from '../../services';
+import CollaboratorModalContext from '../../context/CollaboratorModalContext';
 
 interface ICollaborators {
   Id: string;
@@ -9,19 +10,12 @@ interface ICollaborators {
 }
 
 interface IModalBodyProps {
-  setCollaboratorName: Dispatch<SetStateAction<string>>;
-  addCollaboratorsList: ICollaborators[];
-  setAddCollaboratorsList: Dispatch<SetStateAction<ICollaborator[]>>;
   selectedCollaborators: string[] | undefined;
 }
 
-export function ModalBody({
-  setCollaboratorName,
-  addCollaboratorsList,
-  selectedCollaborators,
-  setAddCollaboratorsList,
-}: IModalBodyProps): JSX.Element {
-  const [collaboratorsList, setCollaboratorsList] = useState<ICollaborators[]>([]);
+export function ModalBody({ selectedCollaborators }: IModalBodyProps): JSX.Element {
+  const { setCollaboratorName, setCollaboratorsList, collaboratorsList, addCollaboratorsList, setAddCollaboratorsList } =
+    useContext<any>(CollaboratorModalContext);
 
   const onChange = async (event: React.ChangeEvent<HTMLInputElement>): Promise<void> => {
     setCollaboratorName(event.target.value);
@@ -36,23 +30,24 @@ export function ModalBody({
     <div className="modal-body" style={{ minHeight: '350px' }}>
       <DebounceInput
         id="collaborators-input"
-        className={`form-control shadow-none ${!!collaboratorsList.length && 'active-search'}`}
+        className={`form-control shadow-none ${!!collaboratorsList?.length && 'active-search'}`}
         onChange={onChange}
         minLength={1}
         debounceTimeout={1000}
       />
-      <ul className={`list-group ${!!collaboratorsList.length && 'active-search'}`}>
-        {collaboratorsList.map((collaborator, index) => {
-          const collaboratorSelected = addCollaboratorsList.some((e) => collaboratorsList.indexOf(e) === index);
+      <ul className={`list-group ${!!collaboratorsList?.length && 'active-search'}`}>
+        {collaboratorsList?.map((collaborator: ICollaborator, index: number) => {
+          const collaboratorSelected = addCollaboratorsList?.some((e: ICollaborator) => collaboratorsList?.indexOf(e) === index);
           return (
             // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
             <li
+              key={collaborator.Id}
               className={`list-group-item py-2 text-center ${collaboratorSelected && 'active'} add-collaborator`}
               onClick={() => {
                 if (!collaboratorSelected) {
-                  setAddCollaboratorsList((curr) => [...curr, collaborator]);
+                  setAddCollaboratorsList((curr: ICollaborator[]) => [...curr, collaborator]);
                 } else {
-                  setAddCollaboratorsList((curr) => curr.filter((id) => id !== collaborator));
+                  setAddCollaboratorsList((curr: ICollaborator[]) => curr.filter((id) => id !== collaborator));
                 }
               }}
             >
