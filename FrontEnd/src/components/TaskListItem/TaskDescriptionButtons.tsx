@@ -1,5 +1,8 @@
-import React, { Dispatch, SetStateAction, useState } from 'react';
+import React, { Dispatch, SetStateAction, useContext, useState } from 'react';
 import { FaEdit, FaTrash } from 'react-icons/fa';
+import ManageContext from '../../context/ManageContext';
+import { IManageContext } from '../../pages/Manage';
+import { IProject } from '../../services';
 import taskService from '../../services/task';
 import { TaskModal } from './TaskModal';
 
@@ -9,20 +12,41 @@ interface ITaskDescriptionButtonsProps {
 }
 
 export function TaskDescriptionButtons({ setIsEditing, Id }: ITaskDescriptionButtonsProps): JSX.Element {
+  const { setProject, projectList, setProjectList }: IManageContext = useContext<any>(ManageContext);
+
   const [showTaskModal, setShowTaskModal] = useState(false);
-  const [error, setError] = useState(false);
   const [taskModalMessage, setTaskModalMessage] = useState('');
   const [close, setClose] = useState(false);
+  const [currentProject, setCurrentProject] = useState<any>(null);
 
   const deleteTask = async (): Promise<void> => {
     const data = await taskService.deleteTask(Id);
+
     setTaskModalMessage(data.message);
-    if (data.error) setError(true);
     setClose(true);
+
+    if (data.Project) setCurrentProject(data.Project);
+  };
+
+  const setProjectState = (): void => {
+    setProject(currentProject);
+
+    const newProjectList = [...projectList];
+    const index = newProjectList.findIndex((project: IProject) => project.Id === currentProject.Id);
+    newProjectList[index] = currentProject;
+
+    setProjectList(newProjectList);
   };
   return (
     <>
-      <TaskModal error={error} close={close} show={showTaskModal} message={taskModalMessage} cb={deleteTask} />
+      <TaskModal
+        setShowTaskModal={setShowTaskModal}
+        close={close}
+        show={showTaskModal}
+        message={taskModalMessage}
+        deleteTask={deleteTask}
+        setTasks={setProjectState}
+      />
       <div className="d-flex justify-content-between align-items-center">
         <h6 className="text-blue-600 fw-semibold">Descrição:</h6>
         <div>

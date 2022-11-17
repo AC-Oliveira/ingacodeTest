@@ -2,6 +2,8 @@ import { Dispatch, useContext, useState } from 'react';
 import taskServices from '../../services/task';
 
 import GlobalContext from '../../context/GlobalContext';
+import ManageContext from '../../context/ManageContext';
+import { ITask } from '../../services';
 
 interface ITaskDescriptionProps {
   isEditing: boolean;
@@ -15,6 +17,7 @@ interface ITaskDescriptionProps {
 
 export function TaskDescription({ isEditing, setIsEditing, taskName, task }: ITaskDescriptionProps): JSX.Element {
   const { setMessage, setShow, setError } = useContext<any>(GlobalContext);
+  const { project, setProject, projectList, setProjectList } = useContext<any>(ManageContext);
   const { Id, Description } = task;
 
   const [description, setDescription] = useState(Description);
@@ -35,7 +38,18 @@ export function TaskDescription({ isEditing, setIsEditing, taskName, task }: ITa
             const data = await taskServices.updateTask(Id, description, taskName);
             setMessage(data.message);
             if (data.error) setError(true);
+            if (data.Task) {
+              const newTaskIndex = project.Tasks.findIndex((t: ITask) => t.Id === data?.Task?.Id);
+              const projectIndex = projectList.findIndex((p: any) => p.Id === project.Id);
+              const newProject = { ...project };
+              newProject.Tasks[newTaskIndex] = data.Task;
+              const newProjectList = [...projectList];
+              newProjectList[projectIndex] = newProject;
+              setProject(newProject);
+              setProjectList(newProjectList);
+            }
             setShow(true);
+            setIsEditing(false);
           }}
           className="col col-6 btn btn-primary my-2"
           type="button"

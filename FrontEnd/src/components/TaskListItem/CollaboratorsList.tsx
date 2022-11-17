@@ -19,7 +19,7 @@ export function CollaboratorsList({ collaborators, taskId }: ICollaboratorsListP
   return (
     <ul className="list-group align-items-center">
       {collaborators?.map((collaborator, index) => (
-        <li className="list-group-item w-100 w-sm-50 text-center d-flex" style={{ maxWidth: '450px' }}>
+        <li key={collaborator.Id} className="list-group-item w-100 w-sm-50 text-center d-flex" style={{ maxWidth: '450px' }}>
           <p className="ms-4 my-1 text-center flex-grow-2 w-100">{collaborator.Name}</p>
           {!collaboratorsRemoved.some((c) => c === collaborators[index]) && (
             <button
@@ -57,7 +57,7 @@ export function CollaboratorsList({ collaborators, taskId }: ICollaboratorsListP
             type="button"
             className="btn bg-gray-700 text-white"
           >
-            Remover Colaborador
+            Remover Colaborador(es)
           </button>
         </>
       )}

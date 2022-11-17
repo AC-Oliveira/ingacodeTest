@@ -1,21 +1,27 @@
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { CollaboratorModal } from '../CollaboratorModal';
 import { CollaboratorsList } from './CollaboratorsList';
 import { TaskDescription } from './TaskDescription';
 import { TaskDescriptionButtons } from './TaskDescriptionButtons';
 import ManageContext from '../../context/ManageContext';
 import { IManageContext } from '../../pages/Manage';
-import { ITask } from '../../services';
+import { ICollaborator, ITask } from '../../services';
+import { CollaboratorModalProvider } from '../../context/CollaboratorModalProvider';
 
-export function TaskListItem({ key, task }: { key: string; task: ITask }): JSX.Element {
+export function TaskListItem({ task }: { task: ITask }): JSX.Element {
   const { project }: IManageContext = useContext<any>(ManageContext);
+  const [collaborators, setCollaborators] = useState<ICollaborator[]>([]);
 
   const [isEditing, setIsEditing] = useState(false);
   const [taskName, setTaskName] = useState(task.Name);
 
   const findCollaborators = task.TimeTrackers?.map((timeTracker) => timeTracker?.Collaborator);
 
-  const collaborators = findCollaborators?.filter((collaborator, idx) => findCollaborators?.findIndex((c) => c.Name === collaborator.Name) === idx);
+  const collaboratorsList = findCollaborators?.filter((collaborator, idx) => findCollaborators?.findIndex((c) => c?.Name === collaborator?.Name) === idx);
+
+  useEffect(() => {
+    setCollaborators(collaboratorsList);
+  }, [collaboratorsList]);
 
   const calcDays = (date: Date): number => {
     const today = String(new Date());
@@ -27,7 +33,7 @@ export function TaskListItem({ key, task }: { key: string; task: ITask }): JSX.E
   };
 
   return (
-    <div key={key} className="list-group-item list-group-item-action bg-gray-100" aria-current="true">
+    <div className="list-group-item list-group-item-action bg-gray-100" aria-current="true">
       <div className="d-flex flex-column  flex-md-row w-100 justify-content-between bg-danger p-2">
         {!isEditing && <h5 className="mb-1 text-white">{taskName}</h5>}
         {isEditing && (
@@ -52,7 +58,9 @@ export function TaskListItem({ key, task }: { key: string; task: ITask }): JSX.E
           ) : (
             <small className="flex-grow-1">Nenhum colaborador foi adcionado a task</small>
           )}
-          <CollaboratorModal TaskId={task.Id} ProjectId={project.Id} collaborators={collaborators?.map((e) => e.Name)} />
+          <CollaboratorModalProvider>
+            <CollaboratorModal TaskId={task.Id} ProjectId={project.Id} collaborators={collaborators?.map((e) => e?.Name)} />
+          </CollaboratorModalProvider>
         </div>
         {!!collaborators?.length && <CollaboratorsList collaborators={collaborators} taskId={task.Id} />}
       </div>

@@ -1,15 +1,17 @@
 import * as bootstrap from 'bootstrap';
-import { useEffect, useRef } from 'react';
+import { Dispatch, SetStateAction, useEffect, useRef } from 'react';
 
 interface ICustomModal {
   show: boolean;
   message: string;
-  cb?: () => Promise<void>;
+  deleteTask?: () => Promise<void>;
+  setTasks: () => void;
+  setShowTaskModal: Dispatch<SetStateAction<boolean>>;
   close?: boolean;
   error?: boolean;
 }
 
-export function TaskModal({ show, message, cb, close = false, error = false }: ICustomModal): JSX.Element {
+export function TaskModal({ show, message, deleteTask, setTasks, setShowTaskModal, close = false, error = false }: ICustomModal): JSX.Element {
   const modalRef: any = useRef();
 
   const showModal = (): void => {
@@ -49,7 +51,8 @@ export function TaskModal({ show, message, cb, close = false, error = false }: I
               className="btn btn-secondary"
               onClick={() => {
                 hideModal();
-                if (close && !error) window.location.reload();
+                if (close && !error) setTasks();
+                setShowTaskModal(false);
               }}
             >
               {close ? 'Fechar' : 'Não'}
@@ -59,7 +62,8 @@ export function TaskModal({ show, message, cb, close = false, error = false }: I
                 type="button"
                 className="btn btn-primary"
                 onClick={() => {
-                  if (cb) cb();
+                  if (deleteTask) deleteTask();
+                  setShowTaskModal(false);
                 }}
               >
                 Sim
