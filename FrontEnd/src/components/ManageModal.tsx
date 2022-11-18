@@ -4,7 +4,7 @@ import GlobalContext from '../context/GlobalContext';
 import ManageContext from '../context/ManageContext';
 
 export function ManageModal(): JSX.Element {
-  const { show, message, setShow } = useContext<any>(GlobalContext);
+  const { show, message, setShow, error, setError } = useContext<any>(GlobalContext);
   const { newTask, setNewTask, newProject, setNewProject } = useContext<any>(ManageContext);
   const modalRef: any = useRef();
 
@@ -44,8 +44,9 @@ export function ManageModal(): JSX.Element {
               type="button"
               className="btn btn-secondary"
               onClick={() => {
-                if (newTask) setNewTask(false);
-                if (newProject) setNewProject(false);
+                if (newTask && !error) setNewTask(false);
+                if (newProject && !error) setNewProject(false);
+                setError(false);
                 setShow(false);
                 hideModal();
               }}

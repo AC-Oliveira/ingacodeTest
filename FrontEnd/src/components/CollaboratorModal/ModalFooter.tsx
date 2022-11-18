@@ -5,6 +5,7 @@ import { ICollaborator, IProject, ITask, ITimeTracker } from '../../services';
 import ManageContext from '../../context/ManageContext';
 import CollaboratorModalContext from '../../context/CollaboratorModalContext';
 import { ICollaboratorModalContext } from '.';
+import { IManageContext } from '../../pages/Manage';
 
 interface IModalFooterProps {
   hideModal: () => void;
@@ -16,7 +17,7 @@ export function ModalFooter({ hideModal, ProjectId, TaskId }: IModalFooterProps)
   const { setShow, setMessage } = useContext<any>(GlobalContext);
   const { setAddCollaboratorsList, addCollaboratorsList, setCollaboratorName, setCollaboratorsList }: ICollaboratorModalContext =
     useContext<any>(CollaboratorModalContext);
-  const { project, setProject, projectList } = useContext<any>(ManageContext);
+  const { project, setProject, setProjectList }: IManageContext = useContext<any>(ManageContext);
   return (
     <div className="modal-footer">
       <button
@@ -34,11 +35,13 @@ export function ModalFooter({ hideModal, ProjectId, TaskId }: IModalFooterProps)
       <button
         onClick={async () => {
           const messages: { name: string; message: string; TimeTracker?: ITimeTracker }[] = [];
-          const EndDate = new Date(Date.parse(String(new Date())) + 3);
+          const now = new Date();
+          now.setMilliseconds(now.getMilliseconds() + 1000);
+          const EndDate = now;
 
           await Promise.all(
             addCollaboratorsList.map(async (collaborator: ICollaborator) => {
-              const data = await timetrackerServices.addCollaborator(ProjectId, collaborator.Id, TaskId, EndDate);
+              const data = await timetrackerServices.addCollaborator(ProjectId, collaborator.Id, TaskId);
 
               messages.push({
                 name: collaborator.Name,
@@ -60,7 +63,7 @@ export function ModalFooter({ hideModal, ProjectId, TaskId }: IModalFooterProps)
           );
 
           setMessage(messagesComponent);
-          setAddCollaboratorsList([]);
+          setCollaboratorsList([]);
           setCollaboratorName('');
           hideModal();
           setShow(true);
@@ -70,20 +73,20 @@ export function ModalFooter({ hideModal, ProjectId, TaskId }: IModalFooterProps)
           const newTasks: ITask[] = project.Tasks;
 
           if (!!newCollaborators.length) {
-            newTasks[taskIndex].TimeTrackers = newTasks[taskIndex].TimeTrackers.concat(newCollaborators as ITimeTracker[]);
+            if (newTasks[taskIndex].TimeTrackers) {
+              newTasks[taskIndex].TimeTrackers = newTasks[taskIndex].TimeTrackers.concat(newCollaborators as ITimeTracker[]);
+            } else {
+              newTasks[taskIndex].TimeTrackers = newCollaborators as ITimeTracker[];
+            }
           }
 
           const newProject: IProject = { ...project, Tasks: newTasks };
-          const newProjectListIndex = projectList.findIndex((p: IProject) => p.Id === ProjectId);
-          const newProjectList: IProject[] = { ...projectList };
-          newProjectList[newProjectListIndex] = newProject;
-
-          console.log(newProjectList);
 
           setProject(newProject);
-          // setProjectList(newProjectList);
+          setProjectList((curr) => curr.set(newProject.Id, newProject));
         }}
         type="button"
+        disabled={!addCollaboratorsList.length}
         className="btn btn-primary"
       >
         Adcionar

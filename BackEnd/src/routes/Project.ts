@@ -4,11 +4,6 @@ import auth from '../middlewares/auth';
 
 const router = express.Router();
 
-router.post(
-  '/create',
-  auth.validateTokenMiddleware,
-  projectController.createProject
-);
 router.get(
   '/find/:name',
   auth.validateTokenMiddleware,
@@ -19,13 +14,23 @@ router.get(
   auth.validateTokenMiddleware,
   projectController.findAllProjects
 );
-router.put(
-  '/update/:name',
+router.get(
+  '/task/:TaskId',
   auth.validateTokenMiddleware,
-  projectController.updateProjects
+  projectController.findProjectByTaskId
+);
+router.post(
+  '/create',
+  auth.validateTokenMiddleware,
+  projectController.createProject
+);
+router.put(
+  '/update/:Id',
+  auth.validateTokenMiddleware,
+  projectController.updateProject
 );
 router.delete(
-  '/delete/:name',
+  '/delete/:Id',
   auth.validateTokenMiddleware,
   projectController.deleteProject
 );

@@ -12,7 +12,7 @@ datasource db {
 
 model Projects {
   Id        String    @id @default(uuid())
-  Name      String    @unique @db.VarChar(250)
+  Name      String    @db.VarChar(250)
   CreatedAt DateTime  @default(now())
   UpdatedAt DateTime?
   DeletedAt DateTime?

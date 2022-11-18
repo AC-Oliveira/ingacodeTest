@@ -7,7 +7,7 @@ import { IManageContext } from '../pages/Manage';
 
 export function TaskRegister(): JSX.Element {
   const { setMessage, setShow, setError } = useContext<any>(GlobalContext);
-  const { setNewTask, project, setProject, projectList, setProjectList }: IManageContext = useContext<any>(ManageContext);
+  const { setNewTask, project, setTaskList, setProject, setProjectList }: IManageContext = useContext<any>(ManageContext);
   const [tasktName, setTasktName] = useState('');
   const [taskDescription, setTaskDescription] = useState('');
   return (
@@ -32,11 +32,9 @@ export function TaskRegister(): JSX.Element {
 
             if (data.Task) {
               const newProject = { ...project, Tasks: [...project.Tasks, data.Task] };
+              setTaskList((curr) => curr.set(data.Task.Id, data.Task));
               setProject(newProject);
-              const projectIndex = projectList.findIndex((proj) => proj.Id === project.Id);
-              const newProjectList = [...projectList];
-              newProjectList[projectIndex] = newProject;
-              setProjectList(newProjectList);
+              setProjectList((curr) => curr.set(newProject.Id, newProject));
             }
           }}
           type="button"

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { RiLockFill, RiUser3Line } from 'react-icons/ri';
 import { useNavigate } from 'react-router-dom';
 import { Input } from '../components/Input';
+
 import userServices from '../services/user';
 
 export function Home(): JSX.Element {

@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import { DebounceInput } from 'react-debounce-input';
 import userServices from '../../services/user';
 import { ICollaborator } from '../../services';
@@ -11,9 +11,10 @@ interface ICollaborators {
 
 interface IModalBodyProps {
   selectedCollaborators: string[] | undefined;
+  TaskId: string;
 }
 
-export function ModalBody({ selectedCollaborators }: IModalBodyProps): JSX.Element {
+export function ModalBody({ selectedCollaborators, TaskId }: IModalBodyProps): JSX.Element {
   const { setCollaboratorName, setCollaboratorsList, collaboratorsList, addCollaboratorsList, setAddCollaboratorsList } =
     useContext<any>(CollaboratorModalContext);
 
@@ -26,10 +27,13 @@ export function ModalBody({ selectedCollaborators }: IModalBodyProps): JSX.Eleme
     }
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  useEffect(() => {}, [collaboratorsList, addCollaboratorsList]);
+
   return (
     <div className="modal-body" style={{ minHeight: '350px' }}>
       <DebounceInput
-        id="collaborators-input"
+        id={`collaborators-input${TaskId}`}
         className={`form-control shadow-none ${!!collaboratorsList?.length && 'active-search'}`}
         onChange={onChange}
         minLength={1}

@@ -6,4 +6,6 @@ export default {
   TASK_CREATED_SUCCESS: 'Task criada com sucesso!',
   TASK_UPDATED_SUCCESS: 'Task atualizada com sucesso!',
   TASK_DELETED_SUCCESS: 'Task deletada com sucesso!',
+  PROJECT_DELETE_FN: (projectName: string) =>
+    `Projeto ${projectName} deletado com sucesso!`,
 };

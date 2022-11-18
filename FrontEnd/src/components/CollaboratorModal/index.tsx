@@ -23,8 +23,8 @@ export function CollaboratorModal({
   TaskId: string;
   collaborators: string[] | undefined;
 }): JSX.Element {
-  const selectModal = document.getElementById('myModal');
-  const Input = document.getElementById('collaborators-input');
+  const selectModal = document.getElementById(`myModal${TaskId}`);
+  const Input = document.getElementById(`collaborators-input${TaskId}`);
 
   selectModal?.addEventListener('shown.bs.modal', () => {
     Input?.focus();
@@ -51,7 +51,7 @@ export function CollaboratorModal({
       <button type="button" className="rounded-circle btn btn-link bg-white ms-auto shadow-none flex-grow-2" onClick={showModal}>
         <BsFillPersonPlusFill size={18} color="0a58ca" />
       </button>
-      <div id="myModal" className="modal fade" ref={modalRef} tabIndex={-1}>
+      <div id={`myModal${TaskId}`} className="modal fade" ref={modalRef} tabIndex={-1}>
         <div className="modal-dialog modal-dialog-centered">
           <div className="modal-content">
             <div className="modal-header">
@@ -60,7 +60,7 @@ export function CollaboratorModal({
               </h5>
               <button type="button" className="btn-close" onClick={hideModal} aria-label="Close" />
             </div>
-            <ModalBody selectedCollaborators={selectedCollaborators} />
+            <ModalBody TaskId={TaskId} selectedCollaborators={selectedCollaborators} />
             <ModalFooter ProjectId={ProjectId} TaskId={TaskId} hideModal={hideModal} />
           </div>
         </div>

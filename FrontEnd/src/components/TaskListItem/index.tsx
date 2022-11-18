@@ -5,11 +5,18 @@ import { TaskDescription } from './TaskDescription';
 import { TaskDescriptionButtons } from './TaskDescriptionButtons';
 import ManageContext from '../../context/ManageContext';
 import { IManageContext } from '../../pages/Manage';
-import { ICollaborator, ITask } from '../../services';
+import { ICollaborator, IProject, ITask } from '../../services';
 import { CollaboratorModalProvider } from '../../context/CollaboratorModalProvider';
+import { TaskTimer } from './TaskTimer';
+import GlobalContext from '../../context/GlobalContext';
+import projectServices from '../../services/project';
+import timetrackerServices from '../../services/timetracker';
 
 export function TaskListItem({ task }: { task: ITask }): JSX.Element {
-  const { project }: IManageContext = useContext<any>(ManageContext);
+  const time = new Date();
+  time.setSeconds(time.getSeconds() + 10600);
+  const { project, setProject, projectList, setProjectList }: IManageContext = useContext<any>(ManageContext);
+  const { activeTask, setActiveTask, setActiveProject } = useContext<any>(GlobalContext);
   const [collaborators, setCollaborators] = useState<ICollaborator[]>([]);
 
   const [isEditing, setIsEditing] = useState(false);
@@ -17,11 +24,11 @@ export function TaskListItem({ task }: { task: ITask }): JSX.Element {
 
   const findCollaborators = task.TimeTrackers?.map((timeTracker) => timeTracker?.Collaborator);
 
-  const collaboratorsList = findCollaborators?.filter((collaborator, idx) => findCollaborators?.findIndex((c) => c?.Name === collaborator?.Name) === idx);
+  const collaboratorsList = findCollaborators?.filter((collaborator, idx) => findCollaborators?.findIndex((c) => c?.Id === collaborator?.Id) === idx);
 
   useEffect(() => {
     setCollaborators(collaboratorsList);
-  }, [collaboratorsList]);
+  }, [project]);
 
   const calcDays = (date: Date): number => {
     const today = String(new Date());
@@ -34,16 +41,52 @@ export function TaskListItem({ task }: { task: ITask }): JSX.Element {
 
   return (
     <div className="list-group-item list-group-item-action bg-gray-100" aria-current="true">
-      <div className="d-flex flex-column  flex-md-row w-100 justify-content-between bg-danger p-2">
-        {!isEditing && <h5 className="mb-1 text-white">{taskName}</h5>}
+      <div className="row w-100 bg-danger p-2 align-items-center mx-0">
+        {!isEditing && <h5 className="col-12 col-md-6 mb-0 text-white">{taskName}</h5>}
         {isEditing && (
           <input
             value={taskName}
             onChange={({ target }) => setTaskName(target.value)}
-            className="mb-1 text-gray-900 rounded-pill ps-3 border border-blue-600 border-3"
+            className="col-12 col-md-6 mb-1 text-gray-900 rounded-pill ps-3 border border-blue-600 border-3"
           />
         )}
-        <small className="text-white">{`${calcDays(task.CreatedAt)} dias atras`}</small>
+        <div className="col-6 col-md-3 d-flex justify-content-center mt-2 mt-md-0">
+          <button
+            onClick={async () => {
+              setActiveTask(task.Id);
+              const data: any = await projectServices.findActiveProject(task.Id);
+              if (data) {
+                setActiveProject(data);
+                const isCollaborator = collaborators.some((e) => e.Id === data.userId);
+
+                const newProject = projectList.get(data.Id) as IProject;
+
+                if (!isCollaborator) {
+                  const EndDate = new Date(Date.parse(String(new Date())) + 3);
+                  setCollaborators((curr) => [...curr, { Name: data.username, Id: data.userId }]);
+                  const collaboratorData = (await timetrackerServices.addCollaborator(data.Id, data.userId, task.Id)) as any;
+                  const taskIndex = newProject.Tasks.findIndex((t) => t.Id === task.Id);
+                  const newTasks: ITask[] = [...newProject.Tasks];
+                  newTasks[taskIndex].TimeTrackers.push(collaboratorData.TimeTracker);
+                  setProjectList((curr) => curr.set(data.Id, { ...newProject, Tasks: newTasks }));
+                }
+
+                setProject(newProject);
+                setActiveProject(data.Id);
+              }
+            }}
+            type="button"
+            className={`${activeTask === task.Id && 'd-none'} btn btn-link text-decoration-none bg-white py-1`}
+          >
+            <p className="mb-0 text-blue-600 text-center">Iniciar</p>
+          </button>
+
+          <div className={`${activeTask !== task.Id && 'd-none'} bg-blue-600 p-1 rounded-pill`}>
+            {/* eslint-disable */}
+            <TaskTimer offsetTimestamp={time} />
+          </div>
+        </div>
+        <small className="col-6 col-md-3 text-white text-end mt-2 mt-md-0">{`${calcDays(task.CreatedAt)} d`}</small>
       </div>
 
       <div className="p-2">

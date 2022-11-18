@@ -12,4 +12,5 @@ export default {
     `${CollaboratorName} não encontrado!`,
   TASK_NAME_DESCRIPTION_EMPTY: 'Nome e descrição da task não podem ser vazios!',
   TASK_NOT_FOUND: 'Task não encontrada!',
+  PROJECT_NAME_NOT_VALID: 'O projeto deve ter um nome válido!',
 };

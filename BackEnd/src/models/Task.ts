@@ -10,45 +10,51 @@ interface Tasks {
 }
 
 const createTask = async (task: Tasks) => {
-  prisma.$connect();
   const newTask = await prisma.tasks.create({
     data: {
       Name: task.Name,
       Description: task.Description,
       ProjectId: task.ProjectId,
     },
+    select: {
+      Id: true,
+      Name: true,
+      Description: true,
+      ProjectId: true,
+      TimeTrackers: true,
+      CreatedAt: true,
+      UpdatedAt: true,
+    },
   });
-  prisma.$disconnect();
+  return newTask;
 };
 
 const findAllProjectTasks = async (ProjectId: string) => {
-  prisma.$connect();
   const tasks = await prisma.tasks.findMany({
     where: {
       ProjectId: ProjectId,
     },
     select: {
+      Id: true,
       Name: true,
       Description: true,
       ProjectId: true,
       TimeTrackers: true,
     },
   });
-  prisma.$disconnect();
   return tasks;
 };
 
 const updateTask = async (Id: string, Description: string, Name: string) => {
   try {
-    prisma.$connect();
     const task = await prisma.tasks.update({
       where: { Id },
       data: {
         Description,
         Name,
+        UpdatedAt: new Date(),
       },
     });
-    prisma.$disconnect();
     return task;
   } catch (error: any) {
     if (error.code === 'P2025') throw new Error(errors.TASK_NOT_FOUND);
@@ -58,18 +64,47 @@ const updateTask = async (Id: string, Description: string, Name: string) => {
 
 const deleteTask = async (Id: string) => {
   try {
-    prisma.$connect();
-    await prisma.tasks.update({
+    const task = await prisma.tasks.update({
       where: { Id },
       data: {
         DeletedAt: new Date(),
+        TimeTrackers: {
+          updateMany: {
+            where: {
+              TaskId: Id,
+            },
+            data: {
+              DeletedAt: new Date(),
+            },
+          },
+        },
       },
     });
-    prisma.$disconnect();
+    return task;
   } catch (error: any) {
     if (error.code === 'P2025') throw new Error(errors.TASK_NOT_FOUND);
     throw error;
   }
 };
 
-export default { createTask, findAllProjectTasks, updateTask, deleteTask };
+const deleteAllProjectTasks = async (ProjectId: string) => {
+  try {
+    await prisma.tasks.updateMany({
+      where: { ProjectId },
+      data: {
+        DeletedAt: new Date(),
+      },
+    });
+  } catch (error: any) {
+    if (error.code === 'P2025') throw new Error(errors.TASK_NOT_FOUND);
+    throw error;
+  }
+};
+
+export default {
+  createTask,
+  findAllProjectTasks,
+  updateTask,
+  deleteTask,
+  deleteAllProjectTasks,
+};

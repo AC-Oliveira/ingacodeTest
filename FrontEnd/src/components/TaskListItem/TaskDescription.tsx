@@ -4,6 +4,7 @@ import taskServices from '../../services/task';
 import GlobalContext from '../../context/GlobalContext';
 import ManageContext from '../../context/ManageContext';
 import { ITask } from '../../services';
+import { IManageContext } from '../../pages/Manage';
 
 interface ITaskDescriptionProps {
   isEditing: boolean;
@@ -17,7 +18,7 @@ interface ITaskDescriptionProps {
 
 export function TaskDescription({ isEditing, setIsEditing, taskName, task }: ITaskDescriptionProps): JSX.Element {
   const { setMessage, setShow, setError } = useContext<any>(GlobalContext);
-  const { project, setProject, projectList, setProjectList } = useContext<any>(ManageContext);
+  const { project, setProject, setProjectList }: IManageContext = useContext<any>(ManageContext);
   const { Id, Description } = task;
 
   const [description, setDescription] = useState(Description);
@@ -40,13 +41,10 @@ export function TaskDescription({ isEditing, setIsEditing, taskName, task }: ITa
             if (data.error) setError(true);
             if (data.Task) {
               const newTaskIndex = project.Tasks.findIndex((t: ITask) => t.Id === data?.Task?.Id);
-              const projectIndex = projectList.findIndex((p: any) => p.Id === project.Id);
               const newProject = { ...project };
               newProject.Tasks[newTaskIndex] = data.Task;
-              const newProjectList = [...projectList];
-              newProjectList[projectIndex] = newProject;
               setProject(newProject);
-              setProjectList(newProjectList);
+              setProjectList((curr) => curr.set(project.Id, newProject));
             }
             setShow(true);
             setIsEditing(false);

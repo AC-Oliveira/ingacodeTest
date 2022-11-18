@@ -5,10 +5,28 @@ import timeTrackerService from '../services/TimeTracker';
 const createTimeTracker = async (req: Request, res: Response) => {
   try {
     const timeTracker = req.body;
-    await timeTrackerService.createTimeTracker(timeTracker);
-    res
-      .status(StatusCodes.CREATED)
-      .json({ message: 'TimeTracker criado com sucesso!' });
+    const createdTimeTracker = await timeTrackerService.createTimeTracker(
+      timeTracker
+    );
+    res.status(StatusCodes.CREATED).json({
+      message: 'TimeTracker criado com sucesso!',
+      TimeTracker: createdTimeTracker,
+    });
+  } catch (error: any) {
+    res.status(StatusCodes.BAD_REQUEST).json({ message: error.message });
+  }
+};
+
+const getTodayTotalTime = async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.body;
+
+    const total = await timeTrackerService.getTodayTotalTime(userId);
+    res.status(StatusCodes.OK).json({
+      ms: total,
+      min: Math.floor((total % 3600000) / 60000),
+      h: Math.floor(total / 3600000),
+    });
   } catch (error: any) {
     res.status(StatusCodes.BAD_REQUEST).json({ message: error.message });
   }
@@ -43,19 +61,31 @@ const deleteTimeTrackerByTaskAndCollaborator = async (
   res: Response
 ) => {
   try {
-    console.log(req.query.users);
-
     const userString: any = req.query['users'];
     const users = JSON.parse(userString);
-    // const users: any = {};
     const { TaskId }: any = req.query;
-    await timeTrackerService.deleteTimeTrackerByTaskAndCollaborator(
-      users,
-      TaskId
-    );
-    res
-      .status(StatusCodes.OK)
-      .json({ message: 'Collaborador(es) removido(s) da Task com sucesso!' });
+
+    const remainingTimeTrackers =
+      await timeTrackerService.deleteTimeTrackerByTaskAndCollaborator(
+        users,
+        TaskId
+      );
+    res.status(StatusCodes.OK).json({
+      message: 'Collaborador(es) removido(s) da Task com sucesso!',
+      TimeTrackers: remainingTimeTrackers,
+    });
+  } catch (error: any) {
+    res.status(StatusCodes.BAD_REQUEST).json({ message: error.message });
+  }
+};
+
+const findRunningOrLastTimeTracker = async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.body;
+    const currTimeTracker =
+      await timeTrackerService.findRunningOrLastTimeTracker(userId);
+    console.log(currTimeTracker, userId);
+    res.status(StatusCodes.OK).json({ TaskId: currTimeTracker?.TaskId });
   } catch (error: any) {
     res.status(StatusCodes.BAD_REQUEST).json({ message: error.message });
   }
@@ -63,7 +93,9 @@ const deleteTimeTrackerByTaskAndCollaborator = async (
 
 export default {
   createTimeTracker,
+  getTodayTotalTime,
   finishTimeTracker,
   findRunningTimeTracker,
+  findRunningOrLastTimeTracker,
   deleteTimeTrackerByTaskAndCollaborator,
 };

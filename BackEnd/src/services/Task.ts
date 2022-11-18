@@ -11,7 +11,8 @@ const createTask = async ({
   Description: string;
 }) => {
   await projectServices.findProjectById(ProjectId);
-  await taskModel.createTask({ ProjectId, Name, Description });
+  const newtask = await taskModel.createTask({ ProjectId, Name, Description });
+  return newtask;
 };
 
 const findAllProjectTasks = async (ProjectId: string) => {
@@ -26,7 +27,8 @@ const updateTaskDescription = async (
   Name: string
 ) => {
   try {
-    await taskModel.updateTask(Id, Description, Name);
+    const task = await taskModel.updateTask(Id, Description, Name);
+    return task;
   } catch (error) {
     throw error;
   }
@@ -34,7 +36,17 @@ const updateTaskDescription = async (
 
 const deleteTask = async (Id: string) => {
   try {
-    await taskModel.deleteTask(Id);
+    const task = await taskModel.deleteTask(Id);
+    return task.ProjectId;
+  } catch (error) {
+    throw error;
+  }
+};
+
+const deleteAllProjectTasks = async (ProjectId: string) => {
+  try {
+    await projectServices.findProjectById(ProjectId);
+    await taskModel.deleteAllProjectTasks(ProjectId);
   } catch (error) {
     throw error;
   }

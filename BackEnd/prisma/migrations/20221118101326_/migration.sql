@@ -9,8 +9,7 @@ CREATE TABLE [dbo].[Projects] (
     [CreatedAt] DATETIME2 NOT NULL CONSTRAINT [Projects_CreatedAt_df] DEFAULT CURRENT_TIMESTAMP,
     [UpdatedAt] DATETIME2,
     [DeletedAt] DATETIME2,
-    CONSTRAINT [Projects_pkey] PRIMARY KEY CLUSTERED ([Id]),
-    CONSTRAINT [Projects_Name_key] UNIQUE NONCLUSTERED ([Name])
+    CONSTRAINT [Projects_pkey] PRIMARY KEY CLUSTERED ([Id])
 );
 
 -- CreateTable

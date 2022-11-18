@@ -1,8 +1,10 @@
 import { useContext, useState } from 'react';
 import { AiOutlineMinusCircle, AiOutlinePlusCircle } from 'react-icons/ai';
-import { ICollaborator } from '../../services';
+import { ICollaborator, ITimeTracker } from '../../services';
 import timetrackerServices from '../../services/timetracker';
 import GlobalContext from '../../context/GlobalContext';
+import { IManageContext } from '../../pages/Manage';
+import ManageContext from '../../context/ManageContext';
 
 interface ICollaboratorsListProps {
   collaborators: ICollaborator[];
@@ -11,6 +13,7 @@ interface ICollaboratorsListProps {
 
 export function CollaboratorsList({ collaborators, taskId }: ICollaboratorsListProps): JSX.Element {
   const { setMessage, setShow } = useContext<any>(GlobalContext);
+  const { project, setProject }: IManageContext = useContext<any>(ManageContext);
 
   const [collaboratorsRemoved, setCollaboratorsRemoved] = useState<ICollaborator[]>([]);
 
@@ -47,12 +50,18 @@ export function CollaboratorsList({ collaborators, taskId }: ICollaboratorsListP
           <span className="my-3">{removedCollaborators.map((e) => e.Name).join(', ')}</span>
           <button
             onClick={async () => {
-              const message = await timetrackerServices.deleteTimeTrackerByTaskAndCollaborator(
+              const data = await timetrackerServices.deleteTimeTrackerByTaskAndCollaborator(
                 removedCollaborators.map((e) => ({ Name: e.Name, CollaboratorId: e.Id })),
                 taskId
               );
-              setMessage(message);
+              setMessage(data.message);
               setShow(true);
+
+              const taskIndex = project.Tasks.findIndex((t) => t.Id === taskId);
+              const newProject = { ...project };
+              newProject.Tasks[taskIndex].TimeTrackers = data.TimeTracker as ITimeTracker[];
+
+              setProject(newProject);
             }}
             type="button"
             className="btn bg-gray-700 text-white"

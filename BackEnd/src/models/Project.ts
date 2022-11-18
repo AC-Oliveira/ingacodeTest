@@ -3,41 +3,57 @@ import { PrismaClient, Projects } from '@prisma/client';
 const prisma = new PrismaClient();
 
 const createProject = async (projectName: string) => {
-  prisma.$connect();
   const newProject = await prisma.projects.create({
     data: {
       Name: projectName,
     },
+    select: {
+      Id: true,
+      Name: true,
+      CreatedAt: true,
+      UpdatedAt: true,
+      Tasks: true,
+    },
   });
-  prisma.$disconnect();
+  return newProject;
 };
 
 const findProjectByName = async (projectName: string) => {
-  prisma.$connect();
-  const project: Projects | null = await prisma.projects.findUnique({
+  const project: Projects | null = await prisma.projects.findFirst({
     where: {
       Name: projectName,
+      DeletedAt: {
+        equals: null,
+      },
     },
   });
-  prisma.$disconnect();
 
   return project;
 };
 
 const findProjectById = async (Id: string) => {
-  prisma.$connect();
-  const project: Projects | null = await prisma.projects.findUnique({
+  const project: any = await prisma.projects.findUnique({
     where: {
       Id: Id,
     },
+    select: {
+      Id: true,
+      Name: true,
+      CreatedAt: true,
+      Tasks: {
+        where: {
+          DeletedAt: {
+            equals: null,
+          },
+        },
+      },
+    },
   });
-  prisma.$disconnect();
 
   return project;
 };
 
 const findAllProjects = async () => {
-  prisma.$connect();
   const projects = await prisma.projects.findMany({
     where: {
       DeletedAt: {
@@ -82,37 +98,80 @@ const findAllProjects = async () => {
       },
       UpdatedAt: true,
     },
+    orderBy: {
+      CreatedAt: 'asc',
+    },
   });
-  prisma.$disconnect();
 
   return projects;
 };
 
-const updateProjects = async (projectName: string, newProjectName: string) => {
-  prisma.$connect();
+const updateProject = async (Id: string, newProjectName: string) => {
   const project = await prisma.projects.update({
     where: {
-      Name: projectName,
+      Id,
     },
     data: {
       Name: newProjectName,
-      UpdatedAt: new Date().toUTCString(),
+      UpdatedAt: new Date(),
     },
   });
-  prisma.$disconnect();
+  return project;
 };
 
-const deleteProject = async (projectName: string) => {
-  prisma.$connect();
-  const project = await prisma.projects.update({
+const deleteProject = async (Id: string) => {
+  const projectDeleted = await prisma.projects.update({
     where: {
-      Name: projectName,
+      Id,
     },
     data: {
-      DeletedAt: new Date().toUTCString(),
+      DeletedAt: new Date(),
+    },
+    select: {
+      Tasks: true,
     },
   });
-  prisma.$disconnect();
+  return projectDeleted;
+};
+
+const findProjectByTaskId = async (taskId: string) => {
+  const project = await prisma.projects.findFirst({
+    where: {
+      Tasks: {
+        some: {
+          Id: taskId,
+        },
+      },
+    },
+    select: {
+      Id: true,
+      Name: true,
+      CreatedAt: true,
+
+      Tasks: {
+        where: {
+          Id: taskId,
+        },
+        select: {
+          Id: true,
+          Name: true,
+          Description: true,
+          TimeTrackers: {
+            select: {
+              TimeZoneId: true,
+              Collaborator: {
+                select: {
+                  Id: true,
+                  Name: true,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+  return project;
 };
 
 export default {
@@ -120,6 +179,7 @@ export default {
   findProjectByName,
   findProjectById,
   findAllProjects,
-  updateProjects,
+  findProjectByTaskId,
+  updateProject,
   deleteProject,
 };

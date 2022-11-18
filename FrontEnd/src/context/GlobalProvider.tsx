@@ -1,4 +1,5 @@
-import { ReactNode, useMemo, useState } from 'react';
+import { ReactNode, useEffect, useMemo, useState } from 'react';
+import timetrackerService from '../services/timetracker';
 import GlobalContext from './GlobalContext';
 
 export function GlobalProvider({ children }: { children: ReactNode }): JSX.Element {
@@ -6,6 +7,8 @@ export function GlobalProvider({ children }: { children: ReactNode }): JSX.Eleme
   const [message, setMessage] = useState('');
   const [show, setShow] = useState(false);
   const [error, setError] = useState(false);
+  const [activeTask, setActiveTask] = useState(null);
+  const [activeProject, setActiveProject] = useState(null);
 
   const contextProviderValue = useMemo(
     () => ({
@@ -17,8 +20,12 @@ export function GlobalProvider({ children }: { children: ReactNode }): JSX.Eleme
       setShow,
       error,
       setError,
+      activeTask,
+      setActiveTask,
+      activeProject,
+      setActiveProject,
     }),
-    [counting, message, show, error]
+    [counting, message, show, error, activeTask, activeProject]
   );
 
   return <GlobalContext.Provider value={contextProviderValue}>{children}</GlobalContext.Provider>;

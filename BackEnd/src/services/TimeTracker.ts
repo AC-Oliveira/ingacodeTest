@@ -10,18 +10,19 @@ const createTimeTracker = async ({
   TimeZoneId,
 }: ITimeTrackers) => {
   const running = await timeTrackerModel.findRunningTimeTracker(CollaboratorId);
-  if (running.length > 0) throw new Error(error.TIME_TRACKER_ALREADY_RUNNING);
-  timeTrackerModel.createTimeTracker({
+  if (running) throw new Error(error.TIME_TRACKER_ALREADY_RUNNING);
+  const timeTracker = await timeTrackerModel.createTimeTracker({
     CollaboratorId,
     EndDate,
     TaskId,
     TimeZoneId,
   });
+  return timeTracker;
 };
 
 const finishTimeTracker = async (Id: string) => {
   const running = await timeTrackerModel.findRunningTimeTracker(Id);
-  if (running.length === 0) throw new Error(error.TIME_TRACKER_NOT_RUNNING);
+  if (running) throw new Error(error.TIME_TRACKER_NOT_RUNNING);
   timeTrackerModel.finishTimeTracker(Id);
 };
 
@@ -43,11 +44,41 @@ const deleteTimeTrackerByTaskAndCollaborator = async (
       );
     })
   );
+  const timeTrackers = await timeTrackerModel.findTimeTrackerByTaskId(TaskId);
+  return timeTrackers;
+};
+
+const findRunningOrLastTimeTracker = async (CollaboratorId: string) => {
+  const currTimeTracker = await timeTrackerModel.findRunningOrLastTimeTracker(
+    CollaboratorId
+  );
+  // console.log(555, currTimeTracker);
+
+  return currTimeTracker;
+};
+
+const getTodayTotalTime = async (CollaboratorId: string) => {
+  const timeTrackers = await timeTrackerModel.getTodayTimeTrackers(
+    CollaboratorId
+  );
+  console.log(timeTrackers);
+
+  const totalTime = timeTrackers.reduce((acc, curr) => {
+    const timeEnd = curr.EndDate
+      ? Date.parse(String(curr.EndDate))
+      : Date.parse(String(new Date()));
+    const timeStart = Date.parse(String(curr.StartDate));
+    const diff = timeEnd - timeStart;
+    return acc + diff;
+  }, 0);
+  return totalTime;
 };
 
 export default {
   createTimeTracker,
+  getTodayTotalTime,
   finishTimeTracker,
+  findRunningOrLastTimeTracker,
   findRunningTimeTracker,
   deleteTimeTrackerByTaskAndCollaborator,
 };

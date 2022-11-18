@@ -4,6 +4,18 @@ import timeTrackerController from '../controllers/TimeTracker';
 
 const router = express.Router();
 
+router.get(
+  '/last',
+  auth.validateTokenMiddleware,
+  timeTrackerController.findRunningOrLastTimeTracker
+);
+
+router.get(
+  '/timetoday',
+  auth.validateTokenMiddleware,
+  timeTrackerController.getTodayTotalTime
+);
+
 router.post(
   '/create',
   auth.validateTokenMiddleware,
