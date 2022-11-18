@@ -9,7 +9,8 @@ const addCollaborator = async (
   const TimeZoneId = Intl.DateTimeFormat().resolvedOptions().timeZone;
   try {
     const start = new Date();
-    const end = start.setMilliseconds(start.getMilliseconds() + 1000);
+    const end = new Date();
+    end.setMilliseconds(end.getMilliseconds() + 1000);
     const { data }: any = await server.post(
       '/timetracker/create',
       { ProjectId, CollaboratorId, TaskId, TimeZoneId, StartDate: start, EndDate: end },
